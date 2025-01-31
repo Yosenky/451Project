@@ -10,6 +10,12 @@ public class Weapon : MonoBehaviour
     public Transform shootPoint;
 
     private float attackCooldown = 0f;
+    private Camera mainCamera;
+
+    void Start()
+    {
+        mainCamera = Camera.main;
+    }
 
     void Update()
     {
@@ -26,8 +32,25 @@ public class Weapon : MonoBehaviour
     {
         if (ballPrefab && shootPoint)
         {
-            Debug.Log("Left Click Detected");
-            GameObject ball = Instantiate(ballPrefab, shootPoint.position, shootPoint.rotation);
+            // Cast a ray from the center of the screen
+            Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            RaycastHit hit;
+
+            Vector3 targetPoint;
+            if (Physics.Raycast(ray, out hit, 100f))
+            {
+                targetPoint = hit.point;
+            }
+            else
+            {
+                targetPoint = ray.origin + ray.direction * 100f;
+            }
+
+            // Calculate direction
+            Vector3 direction = (targetPoint - shootPoint.position).normalized;
+
+            // Instantiate the ball
+            GameObject ball = Instantiate(ballPrefab, shootPoint.position, Quaternion.LookRotation(direction));
             Ball ballScript = ball.GetComponent<Ball>();
             if (ballScript)
             {
@@ -35,11 +58,16 @@ public class Weapon : MonoBehaviour
                 ballScript.speed = bulletSpeed;
             }
 
+            // Set velocity
             Rigidbody rb = ball.GetComponent<Rigidbody>();
             if (rb)
             {
-                rb.velocity = shootPoint.forward * bulletSpeed;
+                rb.velocity = direction * bulletSpeed;
             }
+        }
+        else
+        {
+            Debug.LogWarning("BallPrefab or ShootPoint not assigned.");
         }
     }
 }

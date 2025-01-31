@@ -17,5 +17,6 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Destroy(gameObject);
+        Debug.Log("hit enemy");
     }
 }
