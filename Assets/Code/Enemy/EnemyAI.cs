@@ -21,11 +21,14 @@ public class EnemyAI : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, PlayerInAttackRange;
 
+    public Animator animator;
+
 
     private void Awake()
     {
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
     void Update()
     {
@@ -34,6 +37,7 @@ public class EnemyAI : MonoBehaviour
         
         if (playerInSightRange && !PlayerInAttackRange) Chase();
         if (playerInSightRange && PlayerInAttackRange) Attack();
+        animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f);
     }
 
 
@@ -42,6 +46,7 @@ public class EnemyAI : MonoBehaviour
     private void Chase()
     {
         agent.SetDestination(player.position);
+       
     }
 
     private void Attack()
@@ -51,11 +56,13 @@ public class EnemyAI : MonoBehaviour
         if (!alreadyAttacked)
         {
             //Attack code that could be change on different enemies! 
+            animator.SetTrigger("attack");
 
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, attackRange, whoPlayer))
             {
                 //PLayer health component is not yet implemented, so I am using debug logs to state if the player is being hit
                 Debug.DrawRay(transform.position, transform.forward * attackRange, Color.red, 1f);
+                
                 Debug.Log("Player hit with melee attack!");
             }
 
@@ -72,13 +79,16 @@ public class EnemyAI : MonoBehaviour
     private void Damaged(int damage)
     {
         health -= damage;
-        if(health == 0)
+        animator.SetTrigger("damaged");
+        if (health == 0)
         {
+            animator.SetTrigger("death");
             destroyenemy();
         }
     }
     private void destroyenemy()
     {
+        
         Destroy(gameObject); 
     }
 
