@@ -7,6 +7,8 @@ public class Weapon : MonoBehaviour
     public float bulletSpeed = 20f;
 
     public GameObject ballPrefab;
+    public GameObject boomerangPrefab; 
+
     public Transform shootPoint;
 
     private float attackCooldown = 0f;
@@ -24,6 +26,7 @@ public class Weapon : MonoBehaviour
         if (Input.GetMouseButton(0) && attackCooldown <= 0f)
         {
             Shoot();
+            ShootBoomerang();
             attackCooldown = 1f / attackSpeed;
         }
     }
@@ -70,4 +73,17 @@ public class Weapon : MonoBehaviour
             Debug.LogWarning("BallPrefab or ShootPoint not assigned.");
         }
     }
+    void ShootBoomerang()
+{
+    if (boomerangPrefab && shootPoint)
+    {
+        GameObject boomerang = Instantiate(boomerangPrefab, shootPoint.position, shootPoint.rotation);
+        BoomerangBullet bb = boomerang.GetComponent<BoomerangBullet>();
+        if (bb != null)
+        {
+            bb.damage = damage;
+            bb.shooter = shootPoint;  // Set the shooter so the boomerang knows where to return
+        }
+    }
+}
 }
