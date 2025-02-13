@@ -42,7 +42,7 @@ namespace StarterAssets
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
-        public float JumpTimeout = 0.50f;
+        public float JumpTimeout = 0.1f;
 
         [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
         public float FallTimeout = 0.15f;
@@ -88,6 +88,8 @@ namespace StarterAssets
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
         private float _health = 100;
+        private bool _doubleJumpAvailable = false;
+
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -295,72 +297,80 @@ namespace StarterAssets
 
         private void JumpAndGravity()
         {
+            // Check if the player is grounded.
             if (Grounded)
             {
-                // reset the fall timeout timer
-                _fallTimeoutDelta = FallTimeout;
+                // Reset the double jump flag when on the ground.
+                _doubleJumpAvailable = true;
 
-                // update animator if using character
-                if (_hasAnimator)
-                {
-                    _animator.SetBool(_animIDJump, false);
-                    _animator.SetBool(_animIDFreeFall, false);
-                }
-
-                // stop our velocity dropping infinitely when grounded
-                if (_verticalVelocity < 0.0f)
+                // Prevent downward buildup on the ground.
+                if (_verticalVelocity < 0f)
                 {
                     _verticalVelocity = -2f;
                 }
 
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+                // If the player presses space on the ground, perform the first jump.
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDJump, true);
-                    }
-                }
-
-                // jump timeout
-                if (_jumpTimeoutDelta >= 0.0f)
-                {
-                    _jumpTimeoutDelta -= Time.deltaTime;
+                    PerformFirstJump();
                 }
             }
             else
             {
-                // reset the jump timeout timer
-                _jumpTimeoutDelta = JumpTimeout;
-
-                // fall timeout
-                if (_fallTimeoutDelta >= 0.0f)
+                // While airborne, if the player presses space and a double jump is available,
+                // perform the double jump.
+                if (Input.GetKeyDown(KeyCode.Space) && _doubleJumpAvailable)
                 {
-                    _fallTimeoutDelta -= Time.deltaTime;
+                    PerformDoubleJump();
                 }
-                else
-                {
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDFreeFall, true);
-                    }
-                }
-
-                // if we are not grounded, do not jump
-                _input.jump = false;
             }
 
-            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+            // Apply gravity over time.
             if (_verticalVelocity < _terminalVelocity)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
+
+        private void PerformFirstJump()
+        {
+            _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+            _doubleJumpAvailable = true;
+
+            if (_hasAnimator)
+            {
+                _animator.Play("Jump", -1, 0f); // Restart the animation immediately
+                _animator.SetBool("Jump", true);
+                Invoke("ResetJumpBool", 0.1f); // Small delay to prevent immediate exit
+            }
+
+            Debug.Log("First jump executed.");
+        }
+
+        private void PerformDoubleJump()
+        {
+            _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+            _doubleJumpAvailable = false;
+
+            if (_hasAnimator)
+            {
+                _animator.Play("Jump", -1, 0f); // Restart the animation immediately
+                _animator.SetBool("Jump", true);
+                Invoke("ResetJumpBool", 0.1f);
+            }
+
+            Debug.Log("Double jump executed.");
+        }
+
+        private void ResetJumpBool()
+        {
+            _animator.SetBool("Jump", false);
+        }
+
+
+
+
+
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
@@ -402,5 +412,6 @@ namespace StarterAssets
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
         }
+
     }
 }
