@@ -17,12 +17,22 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //Health target = collision.gameObject.GetComponent<Health>();
-        //if (target != null)
-        //{
-        //    target.TakeDamage(damage);
-        //}
-        Debug.Log("hit");
+       if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Get the EnemyAI script on the enemy
+            EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
+            if (enemyAI != null)
+            {
+                // Call the Damaged method with the boomerang’s damage
+                // Note: enemyAI.Damaged() expects an int,
+                //       so we cast if boomerang damage is a float
+                enemyAI.Damaged(Mathf.RoundToInt(damage));
+            }
+
+          
+            
+        }
         Destroy(gameObject);
+
     }
 }

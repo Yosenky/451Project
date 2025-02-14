@@ -84,7 +84,7 @@ public class EnemyAI : MonoBehaviour
     {
         alreadyAttacked = false;
     }
-    private void Damaged(int damage)
+    public void Damaged(float damage)
     {
         health -= damage;
         animator.SetTrigger("damaged");

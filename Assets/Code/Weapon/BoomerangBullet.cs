@@ -46,13 +46,21 @@ public class BoomerangBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Optionally, check if the boomerang hit an enemy
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log("Boomerang hit enemy");
-            // Apply damage or any other logic here if needed.
+            // Get the EnemyAI script on the enemy
+            EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
+            if (enemyAI != null)
+            {
+                // Call the Damaged method with the boomerang’s damage
+                // Note: enemyAI.Damaged() expects an int,
+                //       so we cast if boomerang damage is a float
+                enemyAI.Damaged(damage);
+            }
+
+            // Optionally destroy the boomerang on collision
+            // Destroy(gameObject);
         }
-        // Optionally, you can also destroy the boomerang on collision:
-        // Destroy(gameObject);
+
     }
 }
