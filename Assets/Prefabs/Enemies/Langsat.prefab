@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 3357710468289444446}
   - component: {fileID: 8967979015877332638}
   - component: {fileID: 7145009036733628333}
+  - component: {fileID: -8461166495453545143}
   m_Layer: 0
   m_Name: Langsat
   m_TagString: Untagged
@@ -329,6 +330,29 @@ MonoBehaviour:
   animator: {fileID: 2260063312541056090}
   projectilePrefab: {fileID: 8085963451402057889, guid: 3f8db203aa38048469f6c1da4ef83cc0, type: 3}
   projectileSpawnPoint: {fileID: 2343511287212415828}
+--- !u!136 &-8461166495453545143
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333786629922003435}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1420080942548685679
 GameObject:
   m_ObjectHideFlags: 0

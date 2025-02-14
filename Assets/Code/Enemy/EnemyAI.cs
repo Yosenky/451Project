@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,10 +61,17 @@ public class EnemyAI : MonoBehaviour
 
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, attackRange, whoPlayer))
             {
+               
                 //PLayer health component is not yet implemented, so I am using debug logs to state if the player is being hit
                 Debug.DrawRay(transform.position, transform.forward * attackRange, Color.red, 1f);
                 
-                Debug.Log("Player hit with melee attack!");
+                
+                ThirdPersonController playerHealth = hit.collider.GetComponent<ThirdPersonController>();
+
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(attackdamage); // Apply the attack damage
+                }
             }
 
 

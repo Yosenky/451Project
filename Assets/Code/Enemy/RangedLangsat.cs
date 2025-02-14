@@ -70,7 +70,7 @@ public class RangedLangsat : MonoBehaviour
                 {
                     Vector3 direction = (player.position - projectileSpawnPoint.position).normalized;
                     rb.velocity = direction * 10f; // Adjust speed 
-                    Debug.Log("Player hit with range attack attack!");
+                    
                 }
             }
 

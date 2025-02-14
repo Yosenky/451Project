@@ -165,12 +165,27 @@ namespace StarterAssets
             Move();
 
             // Temporary removal for health to test animations
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                _health -= 40;
-                print(_health);
-            }
+            //if (Input.GetKeyDown(KeyCode.H))
+            //{
+              //  _health -= 40;
+              //  print(_health);
+           // }
             _animator.SetFloat(_animIDHealth, _health);
+        }
+
+        public void TakeDamage(int damage)
+        {
+            _health -= damage;
+            Debug.Log("player took damage! Current Health: " + _health);
+            if(_health <= 0)
+            {
+                Die();
+            }
+        }
+
+        private void Die()
+        {
+            Debug.Log("Player is dead");
         }
 
         private void LateUpdate()
