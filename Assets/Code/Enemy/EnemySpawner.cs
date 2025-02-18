@@ -36,6 +36,10 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnPosition = GetRandomSpawnPosition();
         if(spawnPosition != Vector3.zero)
         {
+            // our new terrain height is around 15. we need to take that into account
+            float terrainHeight = Terrain.activeTerrain.SampleHeight(spawnPosition);
+            spawnPosition.y = terrainHeight + 1f;
+
             Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
             currentEnemyCount++;
         }
