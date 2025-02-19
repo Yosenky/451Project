@@ -27,7 +27,7 @@ public class RangedLangsat : MonoBehaviour
     public GameObject projectilePrefab; 
     public Transform projectileSpawnPoint;
 
-
+  
     private void Awake()
     {
         player = GameObject.Find("PlayerCapsule").transform;
@@ -42,6 +42,8 @@ public class RangedLangsat : MonoBehaviour
         if (playerInSightRange && !PlayerInAttackRange) Chase();
         if (playerInSightRange && PlayerInAttackRange) Attack();
         animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f);
+
+        
     }
 
 
@@ -84,7 +86,7 @@ public class RangedLangsat : MonoBehaviour
     {
         alreadyAttacked = false;
     }
-    private void Damaged(int damage)
+    public void Damaged(float damage)
     {
         health -= damage;
         animator.SetTrigger("damaged");
@@ -99,5 +101,6 @@ public class RangedLangsat : MonoBehaviour
 
         Destroy(gameObject);
     }
+
 
 }

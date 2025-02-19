@@ -11733,3 +11733,4 @@ MonoBehaviour:
   boomerangDelay: 2
   returnSpeed: 25
   shooter: {fileID: 0}
+  destroyThreshold: 1
