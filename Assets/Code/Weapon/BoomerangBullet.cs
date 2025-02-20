@@ -50,12 +50,20 @@ public class BoomerangBullet : MonoBehaviour
         {
             // Get the EnemyAI script on the enemy
             EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
+            RangedLangsat rangedLangsat = collision.gameObject.GetComponent<RangedLangsat>();
             if (enemyAI != null)
             {
                 // Call the Damaged method with the boomerang’s damage
                 // Note: enemyAI.Damaged() expects an int,
                 //       so we cast if boomerang damage is a float
                 enemyAI.Damaged(damage);
+            }
+            if (rangedLangsat != null)
+            {
+                // Call the Damaged method with the boomerang’s damage
+                // Note: enemyAI.Damaged() expects an int,
+                //       so we cast if boomerang damage is a float
+                rangedLangsat.Damaged(damage);
             }
 
             // Optionally destroy the boomerang on collision

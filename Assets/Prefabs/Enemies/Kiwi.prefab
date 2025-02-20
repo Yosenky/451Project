@@ -340,7 +340,7 @@ MonoBehaviour:
   health: 50
   timeBetweenAttacks: 2
   attackdamage: 2
-  sightRange: 100
+  sightRange: 500
   attackRange: 2
   playerInSightRange: 0
   PlayerInAttackRange: 0
