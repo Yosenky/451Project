@@ -5595,6 +5595,7 @@ MonoBehaviour:
   bulletSpeed: 20
   ballPrefab: {fileID: 1499044505075250615, guid: 02235f3f17d81473cb83151f097ecc4c, type: 3}
   boomerangPrefab: {fileID: 6190647806865687025, guid: dd51ecffa9237415a897b57ee76aef5b, type: 3}
+  explosivePrefab: {fileID: 2197206781674263149, guid: 506d05549ed344c009733bc3b0b95c2f, type: 3}
   shootPoint: {fileID: 1647571985}
 --- !u!1 &797084874
 GameObject:

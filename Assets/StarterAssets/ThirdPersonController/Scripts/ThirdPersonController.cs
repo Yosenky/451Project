@@ -89,7 +89,8 @@ namespace StarterAssets
         private float _terminalVelocity = 53.0f;
         private float _health = 100;
         private bool _doubleJumpAvailable = false;
-
+        
+        public int gold;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -155,6 +156,7 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+            gold = 0;
         }
 
         private void Update()

@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviour
 
     public GameObject ballPrefab;
     public GameObject boomerangPrefab; 
+    public GameObject explosivePrefab; 
 
     public Transform shootPoint;
 
@@ -27,6 +28,7 @@ public class Weapon : MonoBehaviour
         {
             Shoot();
             ShootBoomerang();
+            ShootExplosiveBullet();
             attackCooldown = 1f / attackSpeed;
         }
     }
@@ -74,16 +76,33 @@ public class Weapon : MonoBehaviour
         }
     }
     void ShootBoomerang()
-{
-    if (boomerangPrefab && shootPoint)
     {
-        GameObject boomerang = Instantiate(boomerangPrefab, shootPoint.position, shootPoint.rotation);
-        BoomerangBullet bb = boomerang.GetComponent<BoomerangBullet>();
-        if (bb != null)
+        if (boomerangPrefab && shootPoint)
         {
-            bb.damage = damage;
-            bb.shooter = shootPoint;  // Set the shooter so the boomerang knows where to return
+            GameObject boomerang = Instantiate(boomerangPrefab, shootPoint.position, shootPoint.rotation);
+            BoomerangBullet bb = boomerang.GetComponent<BoomerangBullet>();
+            if (bb != null)
+            {
+                bb.damage = damage;
+                bb.shooter = shootPoint;  // Set the shooter so the boomerang knows where to return
+            }
         }
     }
-}
+    void ShootExplosiveBullet()
+    {
+        if (explosivePrefab && shootPoint)
+        {
+            GameObject bullet = Instantiate(explosivePrefab, shootPoint.position, shootPoint.rotation);
+            ExplosiveBullet bulletScript = bullet.GetComponent<ExplosiveBullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.damage = damage;
+                bulletScript.speed = bulletSpeed;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("ExplosiveBulletPrefab or ShootPoint not assigned.");
+        }
+    }
 }
