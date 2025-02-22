@@ -87,7 +87,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-        private float _health = 100;
+        private float _health = 50;
         private bool _doubleJumpAvailable = false;
         
         public int gold;
@@ -157,6 +157,9 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             gold = 0;
+
+            // Ensure UI gets the player's max health at the start
+            UIController.Instance.SetMaxHealth((int)_health);
         }
 
         private void Update()
@@ -178,8 +181,12 @@ namespace StarterAssets
         public void TakeDamage(int damage)
         {
             _health -= damage;
-            Debug.Log("player took damage! Current Health: " + _health);
-            if(_health <= 0)
+            _health = Mathf.Max(0, _health);
+            Debug.Log("Player took damage! Current Health: " + _health);
+
+            UIController.Instance.SetHealth((int)_health);
+
+            if (_health <= 0)
             {
                 Die();
             }
@@ -188,7 +195,16 @@ namespace StarterAssets
         private void Die()
         {
             Debug.Log("Player is dead");
+
+            // Store final stats for Game Over screen
+            PlayerPrefs.SetInt("FinalMoney", gold);
+            PlayerPrefs.SetFloat("FinalTime", UIController.Instance.GetElapsedTime());
+            PlayerPrefs.Save(); // Ensure data is saved
+
+            // Load Game Over scene
+            UIController.Instance.GameOver();
         }
+
 
         private void LateUpdate()
         {
@@ -426,6 +442,15 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        public void AddMoney(int amount)
+        {
+            gold += amount;
+            Debug.Log("Player received money! Total Gold: " + gold);
+
+            // Update UI
+            UIController.Instance.AddMoney(amount);
         }
 
     }

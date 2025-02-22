@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,34 +7,32 @@ using UnityEngine.AI;
 public class RangedLangsat : MonoBehaviour
 {
     public NavMeshAgent agent;
-
     public Transform player;
-
     public LayerMask whoPlayer;
-
     public float health;
 
-    //Attacking
+    // Attacking
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public int attackdamage;
 
-    //states to see if any of these conditions are met and I am able to change these values 
+    // States to see if any of these conditions are met
     public float sightRange, attackRange;
     public bool playerInSightRange, PlayerInAttackRange;
 
     public Animator animator;
-
-    public GameObject projectilePrefab; 
+    public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
 
-  
+    public int moneyReward = 10; // Money reward for killing this enemy
+
     private void Awake()
     {
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
     }
+
     void Update()
     {
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whoPlayer);
@@ -42,17 +41,11 @@ public class RangedLangsat : MonoBehaviour
         if (playerInSightRange && !PlayerInAttackRange) Chase();
         if (playerInSightRange && PlayerInAttackRange) Attack();
         animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f);
-
-        
     }
-
-
-
 
     private void Chase()
     {
         agent.SetDestination(player.position);
-
     }
 
     private void Attack()
@@ -62,7 +55,7 @@ public class RangedLangsat : MonoBehaviour
         if (!alreadyAttacked)
         {
             animator.SetTrigger("attack");
-            //Attack code that could be change on different enemies! 
+
             if (projectilePrefab != null && projectileSpawnPoint != null)
             {
                 GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
@@ -72,10 +65,8 @@ public class RangedLangsat : MonoBehaviour
                 {
                     Vector3 direction = (player.position - projectileSpawnPoint.position).normalized;
                     rb.velocity = direction * 10f; // Adjust speed 
-                    
                 }
             }
-
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -86,21 +77,34 @@ public class RangedLangsat : MonoBehaviour
     {
         alreadyAttacked = false;
     }
+
     public void Damaged(float damage)
     {
         health -= damage;
         animator.SetTrigger("damaged");
-        if (health == 0)
+        if (health <= 0)
         {
             animator.SetTrigger("death");
+            GivePlayerMoney();
             destroyenemy();
         }
     }
-    private void destroyenemy()
-    {
 
-        Destroy(gameObject);
+    private void GivePlayerMoney()
+    {
+        if (player != null)
+        {
+            ThirdPersonController playerController = player.GetComponent<ThirdPersonController>();
+            if (playerController != null)
+            {
+                playerController.AddMoney(moneyReward);
+                Debug.Log("Player received $" + moneyReward + " for killing RangedLangsat.");
+            }
+        }
     }
 
-
+    private void destroyenemy()
+    {
+        Destroy(gameObject);
+    }
 }
