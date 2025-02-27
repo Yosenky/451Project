@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Chest : MonoBehaviour
+{
+    // Outlets
+    Animator animator;
+
+    // Methods
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    public void Interact()
+    {
+        animator.SetTrigger("Open");
+    }
+}

@@ -34,6 +34,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         maxHealthWidth = healthBarFill.rect.width;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()

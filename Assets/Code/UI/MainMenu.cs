@@ -9,4 +9,9 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("MainScene");
     }
+
+    public void Start()
+    {
+        Cursor.lockState = CursorLockMode.None; // make sure cursor is unlocked
+    }
 }
