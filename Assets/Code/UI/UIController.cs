@@ -12,7 +12,7 @@ public class UIController : MonoBehaviour
     private Color textColor = Color.green;
 
     public TextMeshProUGUI moneyText;
-    private int money = 0;
+    public int money = 0;
 
     public RectTransform healthBarFill;
     private float maxHealthWidth;

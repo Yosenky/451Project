@@ -17,7 +17,11 @@ public class Chest : MonoBehaviour
     public void Interact()
     {
         animator.SetTrigger("Open");
-        ThirdPersonController.Instance.AddItem(1);
-
+        //ThirdPersonController.Instance.AddItem(1);
+        GameController.Instance.InteractChest(this);
+    }
+    public void CancelAnimation()
+    {
+        animator.SetTrigger("Cancel");
     }
 }
