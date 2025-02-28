@@ -1,7 +1,9 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder.Shapes;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -15,6 +17,9 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        // Make singleton
+        public static ThirdPersonController Instance;
+     
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -89,6 +94,8 @@ namespace StarterAssets
         private float _terminalVelocity = 53.0f;
         private float _health = 50;
         private bool _doubleJumpAvailable = false;
+        private float _baseMoveSpeed;
+        public List<int> items;
         
         public int gold;
 
@@ -131,6 +138,7 @@ namespace StarterAssets
 
         private void Awake()
         {
+            Instance = this; // instantate singleton
             // get a reference to our main camera
             if (_mainCamera == null)
             {
@@ -160,27 +168,52 @@ namespace StarterAssets
 
             // Ensure UI gets the player's max health at the start
             UIController.Instance.SetMaxHealth((int)_health);
+
+            // initialize item list to be empty
+            items = new List<int>();
         }
 
         private void Update()
         {
+            //Debug.Log("Move Input: " + _input.move); // Check if input is updating
+
+            if (!_playerInput.enabled)
+            {
+                Debug.LogError("PlayerInput is DISABLED! Enabling it now...");
+                _playerInput.enabled = true;
+            }
 
             JumpAndGravity();
             GroundedCheck();
             Move();
 
-            // Temporary removal for health to test animations
-            //if (Input.GetKeyDown(KeyCode.H))
-            //{
-              //  _health -= 40;
-              //  print(_health);
-           // }
+
             _animator.SetFloat(_animIDHealth, _health);
+
+            // Interacting with chests
+            if (_input.interact)
+            {
+                Vector2 mousePosition = Mouse.current.position.ReadValue();
+                Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 15f))
+                {
+                    print("Interacted with " + hit.transform.name + " from " + hit.distance + "m.");
+
+                    // Always find the Chest component on the parent
+                    Chest targetChest = hit.transform.GetComponentInParent<Chest>();
+                    if (targetChest) targetChest.Interact();
+                }
+
+                _input.interact = false; // Reset interaction
+            }
+
         }
 
         public void TakeDamage(int damage)
         {
-            _health -= damage;
+            _health += damage;
             _health = Mathf.Max(0, _health);
             Debug.Log("Player took damage! Current Health: " + _health);
 
@@ -260,8 +293,9 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
-
+            float targetSpeed = _input.sprint ? SprintSpeed : (MoveSpeed + items.Count);
+            //Debug.Log(targetSpeed);
+            //Debug.Log("Count of items: " + items.Count);
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
@@ -375,7 +409,7 @@ namespace StarterAssets
                 Invoke("ResetJumpBool", 0.1f); // Small delay to prevent immediate exit
             }
 
-            Debug.Log("First jump executed.");
+            //Debug.Log("First jump executed.");
         }
 
         private void PerformDoubleJump()
@@ -390,7 +424,7 @@ namespace StarterAssets
                 Invoke("ResetJumpBool", 0.1f);
             }
 
-            Debug.Log("Double jump executed.");
+            //Debug.Log("Double jump executed.");
         }
 
         private void ResetJumpBool()
@@ -447,10 +481,16 @@ namespace StarterAssets
         public void AddMoney(int amount)
         {
             gold += amount;
-            Debug.Log("Player received money! Total Gold: " + gold);
+            //Debug.Log("Player received money! Total Gold: " + gold);
 
             // Update UI
             UIController.Instance.AddMoney(amount);
+        }
+
+        public void AddItem(int itemID)
+        {
+            items.Add(itemID);
+            Debug.Log("Added " + itemID + " to player items");
         }
 
     }

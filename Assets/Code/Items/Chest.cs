@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,5 +17,7 @@ public class Chest : MonoBehaviour
     public void Interact()
     {
         animator.SetTrigger("Open");
+        ThirdPersonController.Instance.AddItem(1);
+
     }
 }
