@@ -81,9 +81,15 @@ public class EnemyAI : MonoBehaviour
         animator.SetTrigger("damaged");
         if (health <= 0)
         {
-            animator.SetTrigger("death");
+            agent.isStopped = true;
+            alreadyAttacked = true;
+            Collider collider = GetComponent<Collider>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
+            animator.SetBool("isDead", true);
             GivePlayerMoney();
-            destroyenemy();
         }
     }
 

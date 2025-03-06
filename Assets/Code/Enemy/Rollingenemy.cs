@@ -9,12 +9,12 @@ public class Rollingenemy : MonoBehaviour
     public Transform player;
     public LayerMask whoPlayer;
     public float health;
-
+    
     // Charging & Exploding
     public float chargeSpeed = 10f;
     public float explosionRadius = 3f;
     public int explosionDamage = 50;
-    public GameObject explosionEffect;
+    public GameObject Goomba, head, Explosion;
 
     // State Checks
     public float detectionRange = 5f; // Distance at which the enemy detects the player
@@ -22,11 +22,18 @@ public class Rollingenemy : MonoBehaviour
     public Animator animator;
     public int moneyReward = 10;
 
+    private AudioSource source;
+
     private void Awake()
     {
         player = GameObject.Find("PlayerCapsule")?.transform; // Ensure correct player reference
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        Explosion.SetActive(false);
+        Goomba.SetActive(true);
+        head.SetActive(true);
+
+        source = GetComponent<AudioSource>();
     }
     private void Start()
     {
@@ -85,9 +92,8 @@ public class Rollingenemy : MonoBehaviour
 
     private void Explode()
     {
-        if (explosionEffect)
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
 
+        exploding();
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (Collider hit in hitColliders)
         {
@@ -96,13 +102,21 @@ public class Rollingenemy : MonoBehaviour
                 ThirdPersonController playerHealth = hit.GetComponent<ThirdPersonController>();
                 if (playerHealth != null)
                 {
+                    
                     playerHealth.TakeDamage(explosionDamage);
                 }
             }
         }
 
         GivePlayerMoney();
-        Destroy(gameObject);
+        Goomba.SetActive(false);
+        head.SetActive(false);
+    }
+    public void exploding()
+    {
+        Explosion.SetActive(true);
+        source.Play();
+        StartCoroutine(WaitForExplosionAndDestroy());
     }
 
     public void Damaged(float damage)
@@ -112,10 +126,21 @@ public class Rollingenemy : MonoBehaviour
         if (health <= 0)
         {
             GivePlayerMoney();
-            Destroy(gameObject);
+            Explosion.SetActive(true);
+            Goomba.SetActive(false);
+            head.SetActive(false);
+            source.Play();
+            StartCoroutine(WaitForExplosionAndDestroy());
         }
     }
+    private IEnumerator WaitForExplosionAndDestroy()
+    {
+        // Wait for the explosion effect to finish 
+        yield return new WaitForSeconds(Explosion.GetComponent<ParticleSystem>().main.duration);
 
+        // destroy the enemy after the explosion effect is done
+        Destroy(gameObject);
+    }
     private void GivePlayerMoney()
     {
         if (player != null)

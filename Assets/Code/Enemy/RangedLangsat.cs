@@ -46,6 +46,7 @@ public class RangedLangsat : MonoBehaviour
     private void Chase()
     {
         agent.SetDestination(player.position);
+
     }
 
     private void Attack()
@@ -56,23 +57,26 @@ public class RangedLangsat : MonoBehaviour
         {
             animator.SetTrigger("attack");
 
-            if (projectilePrefab != null && projectileSpawnPoint != null)
-            {
-                GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-                Rigidbody rb = projectile.GetComponent<Rigidbody>();
-
-                if (rb != null)
-                {
-                    Vector3 direction = (player.position - projectileSpawnPoint.position).normalized;
-                    rb.velocity = direction * 10f; // Adjust speed 
-                }
-            }
+           
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+    public void shoot()
+    {
+        if (projectilePrefab != null && projectileSpawnPoint != null)
+        {
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
+            if (rb != null)
+            {
+                Vector3 direction = (player.position - projectileSpawnPoint.position).normalized;
+                rb.velocity = direction * 10f; // Adjust speed 
+            }
+        }
+    }
     private void ResetAttack()
     {
         alreadyAttacked = false;
@@ -82,11 +86,19 @@ public class RangedLangsat : MonoBehaviour
     {
         health -= damage;
         animator.SetTrigger("damaged");
+
         if (health <= 0)
         {
-            animator.SetTrigger("death");
-            GivePlayerMoney();
-            destroyenemy();
+            
+            agent.isStopped = true;
+            alreadyAttacked = true;
+            Collider collider = GetComponent<Collider>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
+            animator.SetBool("isDead", true);  
+            GivePlayerMoney();  
         }
     }
 
@@ -105,6 +117,8 @@ public class RangedLangsat : MonoBehaviour
 
     private void destroyenemy()
     {
+   
         Destroy(gameObject);
     }
+    
 }
