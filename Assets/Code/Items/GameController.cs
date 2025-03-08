@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using StarterAssets;
 
-public enum UpgradeType { IncreaseHealth, IncreaseDamage, IncreaseSpeed }
+public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed }
 
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
-    public int chestPrice = 100;
+    public int chestPrice = 0; // set to 0 for testing upgrades
     public GameObject upgradeInterface;
     public GameObject upgradeOptionPanelPrefab;
     public Transform upgradeOptionsContainer; // Container with Horizontal Layout Group
@@ -66,21 +67,12 @@ public class GameController : MonoBehaviour
         float containerWidth = containerRect.rect.width;
         float containerHeight = containerRect.rect.height;
 
-        // Get all upgrade types and shuffle them.
-        UpgradeType[] allUpgrades = (UpgradeType[])System.Enum.GetValues(typeof(UpgradeType));
-        List<UpgradeType> upgradeList = new List<UpgradeType>(allUpgrades);
-        for (int i = 0; i < upgradeList.Count; i++)
-        {
-            UpgradeType temp = upgradeList[i];
-            int randomIndex = Random.Range(i, upgradeList.Count);
-            upgradeList[i] = upgradeList[randomIndex];
-            upgradeList[randomIndex] = temp;
-        }
+        // Define upgrade options.
+        UpgradeType[] allUpgrades = { UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed };
 
         // Instantiate 3 upgrade option panels.
-        for (int i = 0; i < 3; i++)
+        foreach (UpgradeType selectedUpgrade in allUpgrades)
         {
-            UpgradeType selectedUpgrade = upgradeList[i];
             GameObject optionObj = Instantiate(upgradeOptionPanelPrefab, upgradeOptionsContainer);
             UpgradeOptionPanel optionPanel = optionObj.GetComponent<UpgradeOptionPanel>();
 
@@ -95,17 +87,17 @@ public class GameController : MonoBehaviour
 
             switch (selectedUpgrade)
             {
-                case UpgradeType.IncreaseHealth:
-                    description = "Increase Health";
+                case UpgradeType.IncreaseMaxHealth:
+                    description = "Increase Max Health";
                     bgColor = Color.green;
-                    break;
-                case UpgradeType.IncreaseDamage:
-                    description = "Increase Damage";
-                    bgColor = Color.red;
                     break;
                 case UpgradeType.IncreaseSpeed:
                     description = "Increase Speed";
                     bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseSprintSpeed:
+                    description = "Increase Sprint Speed";
+                    bgColor = Color.yellow;
                     break;
             }
 
@@ -122,18 +114,21 @@ public class GameController : MonoBehaviour
         }
 
         UIController.Instance.AddMoney(-chestPrice);
-        chestPrice += 10;
+        //chestPrice += 10;
 
         switch (upgradeType)
         {
-            case UpgradeType.IncreaseHealth:
-                Debug.Log("Health upgraded!");
-                break;
-            case UpgradeType.IncreaseDamage:
-                Debug.Log("Damage upgraded!");
+            case UpgradeType.IncreaseMaxHealth:
+                ThirdPersonController.Instance.UpgradePlayer("maxhealth", 10);
+                Debug.Log("Max Health increased!");
                 break;
             case UpgradeType.IncreaseSpeed:
-                Debug.Log("Speed upgraded!");
+                ThirdPersonController.Instance.UpgradePlayer("movespeed", 1);
+                Debug.Log("Speed increased!");
+                break;
+            case UpgradeType.IncreaseSprintSpeed:
+                ThirdPersonController.Instance.UpgradePlayer("sprintspeed", .2f);
+                Debug.Log("Sprint Speed increased!");
                 break;
         }
 

@@ -19,31 +19,55 @@ namespace StarterAssets
     {
         // Make singleton
         public static ThirdPersonController Instance;
-     
-        [Header("Player")]
-        [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 2.0f;
 
-        [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
-
+        [Header("Player Stats")]
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
 
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
+
         public float RotationSpeed = 1.0f;
+
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
 
-        [Space(10)]
+        [Header("Upgradable Player Stats")]
+        [Tooltip("Level of the player")]
+        public int PlayerLevel = 1;
+        [Tooltip("Current player XP")]
+        public int CurrentPlayerXP = 0;
+        [Tooltip("XP Required for next level")]
+        public int NextLevelRequiredXP = 100;
+
+        [Tooltip("Maximum health of the player")]
+        public float MaxHealth = 100f;
+        private float _health = 100f;
+        [Tooltip("Health regeneration rate per second")]
+        public float HealthRegenRate = 0f;
+
+        [Tooltip("Base move speed of the character in m/s")]
+        public float MoveSpeed = 2.0f;
+
+        [Tooltip("Sprint speed multiplier of the character")]
+        public float SprintMultiplier = 2f;
+
+        [Tooltip("Damage dealt by the player")]
+        public float Damage = 10f;
+
+        [Tooltip("Attack speed of the player (attacks per second)")]
+        public float AttackSpeed = 1.0f;
+
+        [Tooltip("Maximum number of jumps allowed")]
+        public int MaxJumps = 1;
+        private bool _doubleJumpAvailable = false;
+
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
 
-        [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-        public float Gravity = -15.0f;
+        
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -53,7 +77,7 @@ namespace StarterAssets
         public float FallTimeout = 0.15f;
 
         [Header("Player Grounded")]
-        [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
+        [Tooltip("If the character is grounded or not. Not part of the CharacterController built-in grounded check")]
         public bool Grounded = true;
 
         [Tooltip("Useful for rough ground")]
@@ -75,41 +99,44 @@ namespace StarterAssets
         [Tooltip("How far in degrees can you move the camera down")]
         public float BottomClamp = -30.0f;
 
-        [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
+        [Tooltip("Additional degrees to override the camera. Useful for fine-tuning camera position when locked")]
         public float CameraAngleOverride = 0.0f;
 
-        [Tooltip("For locking the camera position on all axis")]
+        [Tooltip("For locking the camera position on all axes")]
         public bool LockCameraPosition = false;
 
-        // cinemachine
+        [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
+        public float Gravity = -15.0f;
+
+        // Cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
-        // player
+        // Player
         private float _speed;
         private float _animationBlend;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-        private float _health = 50;
-        private bool _doubleJumpAvailable = false;
         private float _baseMoveSpeed;
         public List<int> items;
-        
+
         public int gold;
 
-        // timeout deltatime
+        // Timeout delta time
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
 
-        // animation IDs
+        // Animation IDs
         private int _animIDSpeed;
         private int _animIDGrounded;
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
         private int _animIDHealth;
+
+
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
         private PlayerInput _playerInput;
@@ -213,9 +240,9 @@ namespace StarterAssets
 
         public void TakeDamage(int damage)
         {
-            _health += damage;
+            _health -= damage;
             _health = Mathf.Max(0, _health);
-            Debug.Log("Player took damage! Current Health: " + _health);
+            //Debug.Log("Player took damage! Current Health: " + _health);
 
             UIController.Instance.SetHealth((int)_health);
 
@@ -227,7 +254,7 @@ namespace StarterAssets
 
         private void Die()
         {
-            Debug.Log("Player is dead");
+            //Debug.Log("Player is dead");
 
             // Store final stats for Game Over screen
             PlayerPrefs.SetInt("FinalMoney", gold);
@@ -292,10 +319,9 @@ namespace StarterAssets
 
         private void Move()
         {
-            // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : (MoveSpeed + items.Count);
-            //Debug.Log(targetSpeed);
-            //Debug.Log("Count of items: " + items.Count);
+            // Determine the target speed by multiplying base MoveSpeed with SprintMultiplier when sprinting
+            float targetSpeed = _input.sprint ? MoveSpeed * SprintMultiplier : MoveSpeed;
+
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
@@ -312,12 +338,9 @@ namespace StarterAssets
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
             {
-                // creates curved result rather than a linear one giving a more organic speed change
-                // note T in Lerp is clamped, so we don't need to clamp our speed
                 _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
                     Time.deltaTime * SpeedChangeRate);
 
-                // round speed to 3 decimal places
                 _speed = Mathf.Round(_speed * 1000f) / 1000f;
             }
             else
@@ -328,20 +351,13 @@ namespace StarterAssets
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-            // normalise input direction
+            // normalize input direction
             Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-            // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-            // if there is a move input rotate player when the player is moving
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    RotationSmoothTime);
-
-                // rotate to face input direction relative to camera position
-                //transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            
-
+            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                              _mainCamera.transform.eulerAngles.y;
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                RotationSmoothTime);
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
@@ -354,7 +370,8 @@ namespace StarterAssets
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-            } else
+            }
+            else
             {
                 print("No animator!?");
             }
@@ -490,8 +507,61 @@ namespace StarterAssets
         public void AddItem(int itemID)
         {
             items.Add(itemID);
-            Debug.Log("Added " + itemID + " to player items");
+            //Debug.Log("Added " + itemID + " to player items");
         }
+
+        public void UpgradePlayer(string statName, float value)
+        {
+            switch (statName.ToLower())
+            {
+                case "maxhealth":
+                    MaxHealth += value;  // Increase MaxHealth by the given value
+                    _health = MaxHealth; // Restore health to new max
+                    UIController.Instance.SetMaxHealth((int)MaxHealth); // Update UI health bar
+                    break;
+
+                case "movespeed":
+                    MoveSpeed += value;
+                    break;
+
+                case "sprintspeed":
+                    SprintMultiplier += value;
+                    break;
+
+                case "damage":
+                    // Increase Damage by value
+                    // Example: Damage += value;
+                    break;
+
+                case "attackspeed":
+                    // Increase AttackSpeed by value
+                    // Example: AttackSpeed += value;
+                    break;
+
+                case "maxjumps":
+                    // Increase MaxJumps by value (cast to int if necessary)
+                    // Example: MaxJumps += (int)value;
+                    break;
+
+                case "healthregen":
+                    // Increase HealthRegenRate by value
+                    // Example: HealthRegenRate += value;
+                    break;
+
+                case "jumpheight":
+                    // Increase JumpHeight by value
+                    // Example: JumpHeight += value;
+                    break;
+
+                default:
+                    Debug.LogWarning($"UpgradePlayer: Invalid stat name '{statName}'");
+                    return;
+            }
+
+            // Notify UI to update stats display
+            UIController.Instance.UpdateStatsDisplay();
+        }
+
 
     }
 }
