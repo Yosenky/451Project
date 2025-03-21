@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using StarterAssets;
 
-public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed }
+public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight }
 
 public class GameController : MonoBehaviour
 {
@@ -14,6 +14,14 @@ public class GameController : MonoBehaviour
     public Transform upgradeOptionsContainer; // Container with Horizontal Layout Group
     public GameObject cancelButtonPrefab;       // Prefab for the cancel button
     private Chest currentChest;
+    public Sprite maxHealthUpgradeIcon;
+    public Sprite damageUpgradeIcon;
+    public Sprite moveSpeedUpgradeIcon;
+    public Sprite sprintSpeedUpgradeIcon;
+    public Sprite attackSpeedUpgradeIcon;
+    public Sprite maxJumpsUpgradeIcon;
+    public Sprite healthRegenUpgradeIcon;
+    public Sprite jumpHeightUpgradeIcon;
 
     void Awake()
     {
@@ -42,37 +50,54 @@ public class GameController : MonoBehaviour
 
     void SetupUpgradeOptions()
     {
-        // Clear the upgrade options container.
+        // Clear existing upgrade options.
         foreach (Transform child in upgradeOptionsContainer)
             Destroy(child.gameObject);
 
         // Instantiate the cancel button as a child of the overall upgradeInterface,
-        // so it’s not affected by the Horizontal Layout Group.
+        // so it isn’t affected by the Horizontal Layout Group.
         if (cancelButtonPrefab != null)
         {
             GameObject cancelObj = Instantiate(cancelButtonPrefab, upgradeInterface.transform);
             Button cancelBtn = cancelObj.GetComponent<Button>();
             cancelBtn.onClick.AddListener(CancelUpgrade);
 
-            // Position it at the top-right corner of the upgradeInterface.
+            // Position at the top-right of the upgradeInterface.
             RectTransform cancelRect = cancelObj.GetComponent<RectTransform>();
             cancelRect.anchorMin = new Vector2(1, 1);
             cancelRect.anchorMax = new Vector2(1, 1);
             cancelRect.pivot = new Vector2(1, 1);
-            cancelRect.anchoredPosition = new Vector2(-10, -10); // adjust padding as needed
+            cancelRect.anchoredPosition = new Vector2(-10, -10); // adjust as needed
         }
+
+        // CHANGED: Prepare a list of all available upgrade types and shuffle it.
+        UpgradeType[] allUpgrades = 
+        { 
+            UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed, 
+            UpgradeType.IncreaseDamage, UpgradeType.IncreaseAttackSpeed, UpgradeType.IncreaseMaxJumps, 
+            UpgradeType.IncreaseHealthRegenRate, UpgradeType.IncreaseJumpHeight 
+        };
+
+        List<UpgradeType> upgradeList = new List<UpgradeType>(allUpgrades);
+        // Shuffle the list
+        for (int i = 0; i < upgradeList.Count; i++)
+        {
+            UpgradeType temp = upgradeList[i];
+            int randomIndex = Random.Range(i, upgradeList.Count);
+            upgradeList[i] = upgradeList[randomIndex];
+            upgradeList[randomIndex] = temp;
+        }
+        // End of CHANGED section
 
         // Get container dimensions.
         RectTransform containerRect = upgradeOptionsContainer.GetComponent<RectTransform>();
         float containerWidth = containerRect.rect.width;
         float containerHeight = containerRect.rect.height;
 
-        // Define upgrade options.
-        UpgradeType[] allUpgrades = { UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed };
-
-        // Instantiate 3 upgrade option panels.
-        foreach (UpgradeType selectedUpgrade in allUpgrades)
+        // CHANGED: Instantiate only 3 upgrade option panels from the first 3 random upgrades.
+        for (int i = 0; i < 3; i++)
         {
+            UpgradeType selectedUpgrade = upgradeList[i];
             GameObject optionObj = Instantiate(upgradeOptionPanelPrefab, upgradeOptionsContainer);
             UpgradeOptionPanel optionPanel = optionObj.GetComponent<UpgradeOptionPanel>();
 
@@ -83,28 +108,56 @@ public class GameController : MonoBehaviour
 
             Sprite icon = null;
             string description = "";
-            Color bgColor = Color.white;
+            Color bgColor = Color.blue; // default color
 
             switch (selectedUpgrade)
             {
                 case UpgradeType.IncreaseMaxHealth:
+                    icon = maxHealthUpgradeIcon;
                     description = "Increase Max Health";
-                    bgColor = Color.green;
+                    bgColor = Color.blue;
                     break;
                 case UpgradeType.IncreaseSpeed:
+                    icon = moveSpeedUpgradeIcon;
                     description = "Increase Speed";
                     bgColor = Color.blue;
                     break;
                 case UpgradeType.IncreaseSprintSpeed:
+                    icon = sprintSpeedUpgradeIcon;
                     description = "Increase Sprint Speed";
-                    bgColor = Color.yellow;
+                    bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseDamage:
+                    icon = damageUpgradeIcon;
+                    description = "Increase Damage";
+                    bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseAttackSpeed:
+                    icon = attackSpeedUpgradeIcon;
+                    description = "Increase Attack Speed";
+                    bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseMaxJumps:
+                    icon = maxJumpsUpgradeIcon;
+                    description = "Increase Max Jumps";
+                    bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseHealthRegenRate:
+                    icon = healthRegenUpgradeIcon;
+                    description = "Increase Health Regen";
+                    bgColor = Color.blue;
+                    break;
+                case UpgradeType.IncreaseJumpHeight:
+                    icon = jumpHeightUpgradeIcon;
+                    description = "Increase Jump Height";
+                    bgColor = Color.blue;
                     break;
             }
 
             optionPanel.Setup(icon, description, () => UpgradeSelected(selectedUpgrade), bgColor);
         }
+        // End of CHANGED section
     }
-
     void UpgradeSelected(UpgradeType upgradeType)
     {
         if (UIController.Instance.money < chestPrice)
@@ -129,6 +182,26 @@ public class GameController : MonoBehaviour
             case UpgradeType.IncreaseSprintSpeed:
                 ThirdPersonController.Instance.UpgradePlayer("sprintspeed", .2f);
                 Debug.Log("Sprint Speed increased!");
+                break;
+            case UpgradeType.IncreaseDamage:
+                ThirdPersonController.Instance.UpgradePlayer("damage", 2f);
+                Debug.Log("Damage increased!");
+                break;
+            case UpgradeType.IncreaseAttackSpeed:
+                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.5f);
+                Debug.Log("Attack Speed increased!");
+                break;
+            case UpgradeType.IncreaseMaxJumps:
+                ThirdPersonController.Instance.UpgradePlayer("maxjumps", 1f);
+                Debug.Log("Max Jumps increased!");
+                break;
+            case UpgradeType.IncreaseHealthRegenRate:
+                ThirdPersonController.Instance.UpgradePlayer("healthregen", 0.5f);
+                Debug.Log("Health Regen increased!");
+                break;
+            case UpgradeType.IncreaseJumpHeight:
+                ThirdPersonController.Instance.UpgradePlayer("jumpheight", 0.5f);
+                Debug.Log("Jump Height increased!");
                 break;
         }
 

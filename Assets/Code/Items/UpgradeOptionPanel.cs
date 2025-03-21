@@ -19,6 +19,11 @@ public class UpgradeOptionPanel : MonoBehaviour
         onSelect = action;
         background.color = backgroundColor;
         selectButton.onClick.AddListener(HandleSelect);
+        if(iconImage != null)
+        {
+            RectTransform iconRect = iconImage.GetComponent<RectTransform>();
+            iconRect.sizeDelta = new Vector2(80, 80); // Adjust these values as needed.
+        }
     }
 
     private void HandleSelect()

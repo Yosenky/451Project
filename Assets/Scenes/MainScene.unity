@@ -907,6 +907,14 @@ MonoBehaviour:
   upgradeOptionPanelPrefab: {fileID: 398586802385610941, guid: 9f14e0fb7a06143548c848af39ee9faa, type: 3}
   upgradeOptionsContainer: {fileID: 126055062}
   cancelButtonPrefab: {fileID: 258507823730310868, guid: d4456c26a0c0b46a3bd070a957fe8c4a, type: 3}
+  maxHealthUpgradeIcon: {fileID: 21300000, guid: 06e399cf378f745fdb253cd071aad51f, type: 3}
+  damageUpgradeIcon: {fileID: 21300000, guid: 7d43e9746f0d74d7fb93a4f574a7beaf, type: 3}
+  moveSpeedUpgradeIcon: {fileID: 21300000, guid: 500d2adafcc0f4cee8c1facb3851479a, type: 3}
+  sprintSpeedUpgradeIcon: {fileID: 21300000, guid: 4c2bf7c3f54e043bc81bb208e29f70d6, type: 3}
+  attackSpeedUpgradeIcon: {fileID: 21300000, guid: 1ef14d822e644477bb1fe7930f210f2e, type: 3}
+  maxJumpsUpgradeIcon: {fileID: 21300000, guid: 76f0a2683527c41469ecfe7ab119eab2, type: 3}
+  healthRegenUpgradeIcon: {fileID: 21300000, guid: 00f6e3a8c2d684a18bbd0448bc482648, type: 3}
+  jumpHeightUpgradeIcon: {fileID: 21300000, guid: 0063ed4850e544fde9188b8780e35f7e, type: 3}
 --- !u!4 &102126811
 Transform:
   m_ObjectHideFlags: 0

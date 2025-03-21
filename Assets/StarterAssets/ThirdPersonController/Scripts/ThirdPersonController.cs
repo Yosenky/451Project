@@ -123,7 +123,6 @@ namespace StarterAssets
         public List<int> items;
 
         public int gold;
-
         // Timeout delta time
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
@@ -529,28 +528,25 @@ namespace StarterAssets
                     break;
 
                 case "damage":
-                    // Increase Damage by value
-                    // Example: Damage += value;
+                    Damage += value;
                     break;
 
                 case "attackspeed":
-                    // Increase AttackSpeed by value
-                    // Example: AttackSpeed += value;
+                    AttackSpeed += value;
                     break;
 
                 case "maxjumps":
                     // Increase MaxJumps by value (cast to int if necessary)
-                    // Example: MaxJumps += (int)value;
+                    MaxJumps += (int) value;
                     break;
 
                 case "healthregen":
-                    // Increase HealthRegenRate by value
-                    // Example: HealthRegenRate += value;
+                    HealthRegenRate += value;
                     break;
 
                 case "jumpheight":
                     // Increase JumpHeight by value
-                    // Example: JumpHeight += value;
+                    JumpHeight += value;
                     break;
 
                 default:
