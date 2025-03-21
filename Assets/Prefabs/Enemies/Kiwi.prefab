@@ -297,6 +297,7 @@ Transform:
   m_Children:
   - {fileID: 2432765149032624578}
   - {fileID: 3786356125213952238}
+  - {fileID: 4516727334120835488}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 103.773, z: 0}
 --- !u!95 &9151089659397448531
@@ -338,6 +339,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   health: 50
+  damageText3DPrefab: {fileID: 1488924414224084792, guid: 86c2674b70c19944cb1e2c4890a8c888, type: 3}
+  damageTextSpawnPoint: {fileID: 4516727334120835488}
   timeBetweenAttacks: 2
   attackdamage: 2
   sightRange: 500
@@ -345,6 +348,7 @@ MonoBehaviour:
   playerInSightRange: 0
   PlayerInAttackRange: 0
   animator: {fileID: 9151089659397448531}
+  moneyReward: 10
 --- !u!195 &3002150521228022179
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1068,6 +1072,37 @@ Transform:
   - {fileID: 3335589837233577373}
   m_Father: {fileID: 648251336525550357}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8992456782796567054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4516727334120835488}
+  m_Layer: 0
+  m_Name: DamageNumberK
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4516727334120835488
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8992456782796567054}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.034824025, y: -0.02037561, z: -0.009293066, w: -0.9991425}
+  m_LocalPosition: {x: 0.013, y: 1.122, z: -0.183}
+  m_LocalScale: {x: 0.2794802, y: 0.2794802, z: 0.2794802}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 648251336525550357}
+  m_LocalEulerAnglesHint: {x: 3.969, y: -357.624, z: 1.148}
 --- !u!1 &9134059692246722777
 GameObject:
   m_ObjectHideFlags: 0

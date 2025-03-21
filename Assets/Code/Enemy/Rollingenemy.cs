@@ -9,7 +9,10 @@ public class Rollingenemy : MonoBehaviour
     public Transform player;
     public LayerMask whoPlayer;
     public float health;
-    
+
+    public GameObject damageText3DPrefab;
+    public Transform damageTextSpawnPoint;
+
     // Charging & Exploding
     public float chargeSpeed = 10f;
     public float explosionRadius = 3f;
@@ -108,7 +111,7 @@ public class Rollingenemy : MonoBehaviour
             }
         }
 
-        GivePlayerMoney();
+        
         Goomba.SetActive(false);
         head.SetActive(false);
     }
@@ -122,6 +125,7 @@ public class Rollingenemy : MonoBehaviour
     public void Damaged(float damage)
     {
         health -= damage;
+        ShowDamageNumber(damage);
 
         if (health <= 0)
         {
@@ -131,6 +135,16 @@ public class Rollingenemy : MonoBehaviour
             head.SetActive(false);
             source.Play();
             StartCoroutine(WaitForExplosionAndDestroy());
+        }
+    }
+
+    private void ShowDamageNumber(float damage)
+    {
+        if (damageText3DPrefab != null && damageTextSpawnPoint != null)
+        {
+            Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+            GameObject dmg = Instantiate(damageText3DPrefab, damageTextSpawnPoint.position + randomOffset, Quaternion.identity);
+            dmg.GetComponent<DamageNumber3D>().SetDamage(damage);
         }
     }
     private IEnumerator WaitForExplosionAndDestroy()

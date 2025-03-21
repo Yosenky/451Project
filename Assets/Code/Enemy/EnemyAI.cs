@@ -11,6 +11,9 @@ public class EnemyAI : MonoBehaviour
     public LayerMask whoPlayer;
     public float health;
 
+    public GameObject damageText3DPrefab;
+    public Transform damageTextSpawnPoint;
+
     // Attacking
     public float timeBetweenAttacks;
     bool alreadyAttacked;
@@ -79,6 +82,9 @@ public class EnemyAI : MonoBehaviour
     {
         health -= damage;
         animator.SetTrigger("damaged");
+
+        ShowDamageNumber(damage);
+
         if (health <= 0)
         {
             agent.isStopped = true;
@@ -90,6 +96,16 @@ public class EnemyAI : MonoBehaviour
             }
             animator.SetBool("isDead", true);
             GivePlayerMoney();
+        }
+    }
+
+    private void ShowDamageNumber(float damage)
+    {
+        if (damageText3DPrefab != null && damageTextSpawnPoint != null)
+        {
+            Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+            GameObject dmg = Instantiate(damageText3DPrefab, damageTextSpawnPoint.position + randomOffset, Quaternion.identity);
+            dmg.GetComponent<DamageNumber3D>().SetDamage(damage);
         }
     }
 

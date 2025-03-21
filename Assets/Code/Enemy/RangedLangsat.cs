@@ -11,6 +11,9 @@ public class RangedLangsat : MonoBehaviour
     public LayerMask whoPlayer;
     public float health;
 
+    public GameObject damageText3DPrefab;
+    public Transform damageTextSpawnPoint;
+
     // Attacking
     public float timeBetweenAttacks;
     bool alreadyAttacked;
@@ -87,6 +90,8 @@ public class RangedLangsat : MonoBehaviour
         health -= damage;
         animator.SetTrigger("damaged");
 
+        ShowDamageNumber(damage);
+
         if (health <= 0)
         {
             
@@ -99,6 +104,16 @@ public class RangedLangsat : MonoBehaviour
             }
             animator.SetBool("isDead", true);  
             GivePlayerMoney();  
+        }
+    }
+
+    private void ShowDamageNumber(float damage)
+    {
+        if (damageText3DPrefab != null && damageTextSpawnPoint != null)
+        {
+            Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), 0, Random.Range(-0.3f, 0.3f));
+            GameObject dmg = Instantiate(damageText3DPrefab, damageTextSpawnPoint.position + randomOffset, Quaternion.identity);
+            dmg.GetComponent<DamageNumber3D>().SetDamage(damage);
         }
     }
 

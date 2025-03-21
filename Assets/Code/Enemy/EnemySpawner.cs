@@ -17,8 +17,12 @@ public class EnemySpawner : MonoBehaviour
     private float minSpawnInterval = 1.5f; // Lowest possible spawn interval
     private float spawnIntervalDecrease = 0.5f; // How much the interval decreases
 
+    private float statMultiplier = 1f;
+    private float statMultiplierIncrease = 0.25f;
+
     private List<GameObject> activeEnemies = new List<GameObject>();
 
+    public GameObject meleeAuraPrefab;
     void Start()
     {
         StartCoroutine(SpawnEnemies());
@@ -47,6 +51,7 @@ public class EnemySpawner : MonoBehaviour
 
             maxEnemies += maxEnemyIncreaseAmount; // Increase max enemy count
             spawnInterval = Mathf.Max(spawnInterval - spawnIntervalDecrease, minSpawnInterval); // Reduce spawn interval but never below min
+            statMultiplier += statMultiplierIncrease;
 
             Debug.Log($"Difficulty Increased! Max Enemies: {maxEnemies}, Spawn Interval: {spawnInterval}");
         }
@@ -68,9 +73,52 @@ public class EnemySpawner : MonoBehaviour
 
             GameObject chosenEnemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
             GameObject newEnemy = Instantiate(chosenEnemyPrefab, spawnPosition, Quaternion.identity);
+
             activeEnemies.Add(newEnemy);
+            ScaleEnemyStats(newEnemy);
 
             Debug.Log("Spawned " + chosenEnemyPrefab.name + " at position: " + spawnPosition);
+        }
+
+
+    }
+
+    void ScaleEnemyStats(GameObject enemy)
+    {
+       
+
+        
+        if (enemy.TryGetComponent<RangedLangsat>(out RangedLangsat ranged))
+        {
+            enemy.transform.localScale *= 1f + (statMultiplier - 1f) * 0.5f;
+            ranged.health *= statMultiplier;
+            ranged.attackdamage = Mathf.RoundToInt(ranged.attackdamage * statMultiplier);
+            ranged.agent.speed *= statMultiplier;
+        }
+        else if (enemy.TryGetComponent<EnemyAI>(out EnemyAI melee)) 
+        {
+            melee.health *= statMultiplier;
+            melee.attackdamage = Mathf.RoundToInt(melee.attackdamage * statMultiplier);
+            melee.agent.speed *= statMultiplier;
+            if (meleeAuraPrefab != null)
+            {
+                GameObject aura = Instantiate(meleeAuraPrefab, enemy.transform);
+                aura.transform.localPosition = Vector3.zero;
+
+                ParticleSystem ps = aura.GetComponent<ParticleSystem>();
+                if (ps != null)
+                {
+                    var main = ps.main;
+                    main.startColor = GetColorByDifficulty(statMultiplier);
+                }
+            }
+        }
+        else if (enemy.TryGetComponent<Rollingenemy>(out Rollingenemy explodey)) 
+        {
+            enemy.transform.localScale *= 1f + (statMultiplier - 1f) * 0.5f;
+            explodey.health *= statMultiplier;
+            explodey.explosionDamage = Mathf.RoundToInt(explodey.explosionDamage * statMultiplier);
+            
         }
     }
 
@@ -88,5 +136,16 @@ public class EnemySpawner : MonoBehaviour
             }
         }
         return Vector3.zero;
+    }
+    Color GetColorByDifficulty(float multiplier)
+    {
+        if (multiplier < 1.5f)
+            return Color.green;
+        else if (multiplier < 2f)
+            return Color.yellow;
+        else if (multiplier < 3f)
+            return new Color(1f, 0.5f, 0f); 
+        else
+            return Color.red;
     }
 }

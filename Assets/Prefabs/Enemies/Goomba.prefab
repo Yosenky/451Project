@@ -9572,6 +9572,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5663729301643433601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4060345596824204233}
+  m_Layer: 0
+  m_Name: DamageNumberG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &4060345596824204233
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5663729301643433601}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.154, y: 2.203, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6089692170635420959}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6902116550996918181
 GameObject:
   m_ObjectHideFlags: 0
@@ -9610,6 +9641,7 @@ Transform:
   - {fileID: 1552893595612909244}
   - {fileID: 8546221196477826545}
   - {fileID: 420876}
+  - {fileID: 4060345596824204233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2678774992907866648
@@ -9715,9 +9747,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   health: 20
+  damageText3DPrefab: {fileID: 1488924414224084792, guid: 86c2674b70c19944cb1e2c4890a8c888, type: 3}
+  damageTextSpawnPoint: {fileID: 4060345596824204233}
   chargeSpeed: 20
   explosionRadius: 5
-  explosionDamage: 20
+  explosionDamage: 5
   Goomba: {fileID: 4701010532701006533}
   head: {fileID: 2454150141103361545}
   Explosion: {fileID: 141070}
