@@ -18,6 +18,7 @@ public class GameOverScreen : MonoBehaviour
         finalStatsText.text = $"You survived: {minutes:00}:{seconds:00}\nMoney earned: ${money}";
 
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void PlayAgain()

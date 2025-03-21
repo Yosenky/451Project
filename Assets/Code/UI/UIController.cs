@@ -21,6 +21,13 @@ public class UIController : MonoBehaviour
     private float maxHealthWidth;
     private int maxHealth;
 
+    public RectTransform statsPanel;               // The full panel containing statsText + toggleText
+    public TextMeshProUGUI toggleText;             // The "Press Tab to Hide/Expand" text
+    public GameObject statsTextObject;             // The actual text box showing stats
+    private Vector2 expandedSize = new Vector2(325, 400); 
+    private Vector2 collapsedSize = new Vector2(325, 50);
+    private bool statsVisible = true;
+
     // Dictionary to store initial stat values
     private Dictionary<string, float> initialStats = new Dictionary<string, float>();
 
@@ -56,6 +63,9 @@ public class UIController : MonoBehaviour
             initialStats["Jump Height"] = player.JumpHeight;
 
         }
+
+        expandedSize = new Vector2(325, 400);
+        collapsedSize = new Vector2(325, 50);
     }
 
     void Update()
@@ -83,7 +93,15 @@ public class UIController : MonoBehaviour
         timerText.color = textColor;
         timerText.text = $"Time Survived: {minutes:00}:{seconds:00}   {difficulty}";
 
-        UpdateStatsDisplay();
+        if (statsVisible)
+        {
+            UpdateStatsDisplay();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ToggleStatsPanel();
+        }
     }
 
     public void AddMoney(int amount)
@@ -147,15 +165,25 @@ public class UIController : MonoBehaviour
                 : $"<color=#000000><b>{statName}: {value}</b></color>";
         }
 
-        statsText.text = "<b>Stats</b>\n\n" +
-                         FormatStat("Max Health", player.MaxHealth) + "\n" +
+        statsText.text = FormatStat("Max Health", player.MaxHealth) + "\n" +
                          FormatStat("Move Speed", player.MoveSpeed) + "\n" +
                          FormatStat("Sprint Multiplier", player.SprintMultiplier) + "\n" +
-                         FormatStat("Damage", player.Damage) + "\n" +
-                         FormatStat("Attack Speed", player.AttackSpeed) + "\n" +
+                         FormatStat("Damage", player.GetWeapon().damage) + "\n" +
+                         FormatStat("Attack Speed", player.GetWeapon().attackSpeed) + "\n" +
                          FormatStat("Max Jumps", player.MaxJumps) + "\n" +
                          FormatStat("Health Regen", player.HealthRegenRate) + "\n" +
                          FormatStat("Jump Height", player.JumpHeight) + "\n";
+    }
+
+    private void ToggleStatsPanel()
+    {
+        statsVisible = !statsVisible;
+
+        statsTextObject.SetActive(statsVisible);
+        toggleText.text = statsVisible ? "[TAB] Shrink Stats" : "[TAB] Expand Stats";
+
+        float newHeight = statsVisible ? 400f : 50f;
+        statsPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, newHeight);
     }
 
 }

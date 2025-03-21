@@ -45,8 +45,10 @@ namespace StarterAssets
         [Tooltip("Maximum health of the player")]
         public float MaxHealth = 100f;
         private float _health = 100f;
+
         [Tooltip("Health regeneration rate per second")]
         public float HealthRegenRate = 0f;
+        private float _regenTimer = 0f;
 
         [Tooltip("Base move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -61,7 +63,7 @@ namespace StarterAssets
         public float AttackSpeed = 1.0f;
 
         [Tooltip("Maximum number of jumps allowed")]
-        public int MaxJumps = 1;
+        public int MaxJumps = 2;
         private bool _doubleJumpAvailable = false;
 
         [Tooltip("The height the player can jump")]
@@ -120,6 +122,8 @@ namespace StarterAssets
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
         private float _baseMoveSpeed;
+        private float _currentJumps; // num of jumps taken currently
+        private Weapon weapon;
         public List<int> items;
 
         public int gold;
@@ -191,6 +195,14 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             gold = 0;
+            MaxJumps = 2; // Make sure to set MaxJumps to 2 at start of game
+
+            // Get weapon from child
+            weapon = GetComponentInChildren<Weapon>();
+            if (weapon == null)
+            {
+                Debug.LogWarning("Weapon script not found on child object!");
+            }
 
             // Ensure UI gets the player's max health at the start
             UIController.Instance.SetMaxHealth((int)_health);
@@ -225,7 +237,7 @@ namespace StarterAssets
 
                 if (Physics.Raycast(ray, out hit, 15f))
                 {
-                    print("Interacted with " + hit.transform.name + " from " + hit.distance + "m.");
+                    //print("Interacted with " + hit.transform.name + " from " + hit.distance + "m.");
 
                     // Always find the Chest component on the parent
                     Chest targetChest = hit.transform.GetComponentInParent<Chest>();
@@ -234,6 +246,23 @@ namespace StarterAssets
 
                 _input.interact = false; // Reset interaction
             }
+
+            // Health Regen
+            if (HealthRegenRate > 0 && _health < MaxHealth)
+            {
+                _regenTimer += Time.deltaTime;
+
+                if (_regenTimer >= 1f)
+                {
+                    float regenAmount = HealthRegenRate * Mathf.Floor(_regenTimer); // Regen per full second(s)
+                    _health += regenAmount;
+                    _health = Mathf.Min(_health, MaxHealth); // Clamp to MaxHealth
+                    _regenTimer -= Mathf.Floor(_regenTimer); // Retain fractional overflow
+
+                    UIController.Instance.SetHealth((int)_health);
+                }
+            }
+
 
         }
 
@@ -383,6 +412,7 @@ namespace StarterAssets
             {
                 // Reset the double jump flag when on the ground.
                 _doubleJumpAvailable = true;
+                _currentJumps = 1;
 
                 // Prevent downward buildup on the ground.
                 if (_verticalVelocity < 0f)
@@ -417,10 +447,10 @@ namespace StarterAssets
         {
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
             _doubleJumpAvailable = true;
-
+            _currentJumps++;
             if (_hasAnimator)
             {
-                _animator.Play("Jump", -1, 0f); // Restart the animation immediately
+                _animator.Play("PlayerJump"); // Restart the animation immediately
                 _animator.SetBool("Jump", true);
                 Invoke("ResetJumpBool", 0.1f); // Small delay to prevent immediate exit
             }
@@ -431,11 +461,16 @@ namespace StarterAssets
         private void PerformDoubleJump()
         {
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-            _doubleJumpAvailable = false;
+            _currentJumps++;
+            if(_currentJumps >= MaxJumps)
+            {
+                _doubleJumpAvailable = false;
+            }
+            
 
             if (_hasAnimator)
             {
-                _animator.Play("Jump", -1, 0f); // Restart the animation immediately
+                _animator.Play("PlayerJump"); // Restart the animation immediately
                 _animator.SetBool("Jump", true);
                 Invoke("ResetJumpBool", 0.1f);
             }
@@ -509,6 +544,12 @@ namespace StarterAssets
             //Debug.Log("Added " + itemID + " to player items");
         }
 
+        // Gets the weapon, used for updating UI
+        public Weapon GetWeapon()
+        {
+            return weapon;
+        }
+
         public void UpgradePlayer(string statName, float value)
         {
             switch (statName.ToLower())
@@ -528,16 +569,20 @@ namespace StarterAssets
                     break;
 
                 case "damage":
-                    Damage += value;
+                    weapon.damage += value;
+                    Debug.Log("Weapon damage upgraded to " + weapon.damage);
                     break;
 
                 case "attackspeed":
-                    AttackSpeed += value;
+
+                    weapon.attackSpeed += value;
+                    Debug.Log("Weapon attack speed upgraded to " + weapon.attackSpeed);
                     break;
 
                 case "maxjumps":
                     // Increase MaxJumps by value (cast to int if necessary)
                     MaxJumps += (int) value;
+                    Debug.Log("MaxJumps increased to " + MaxJumps);
                     break;
 
                 case "healthregen":
