@@ -69,7 +69,7 @@ namespace StarterAssets
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
 
-        
+
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -180,7 +180,7 @@ namespace StarterAssets
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             _animator = GetComponentInParent<Animator>(); // animator is attached to parent, not child
-            _hasAnimator = _animator != null ;
+            _hasAnimator = _animator != null;
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -242,6 +242,24 @@ namespace StarterAssets
                     // Always find the Chest component on the parent
                     Chest targetChest = hit.transform.GetComponentInParent<Chest>();
                     if (targetChest) targetChest.Interact();
+
+                    // find the microwave door if there is any
+                    MicrowaveDoor microwaveDoor = hit.transform.GetComponent<MicrowaveDoor>();
+                    if (microwaveDoor) microwaveDoor.Toggle();
+
+                    // kicking the lemon
+                    if (hit.collider.CompareTag("Collidables"))
+                    {
+                        Rigidbody lemonRb = hit.collider.GetComponent<Rigidbody>();
+                        if (lemonRb != null)
+                        {
+                            Vector3 kickDirection = ray.direction.normalized;
+                            float kickForce = 50f;
+
+                            lemonRb.AddForce(kickDirection * kickForce, ForceMode.Impulse);
+                            Debug.Log("Player kicked lemon with force " + kickForce);
+                        }
+                    }
                 }
 
                 _input.interact = false; // Reset interaction
@@ -327,22 +345,22 @@ namespace StarterAssets
         private void CameraRotation()
         {
             if (_input.look.sqrMagnitude >= _threshold)
-			{
-				//Don't multiply mouse input by Time.deltaTime
-				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-				
-				_cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
-				_rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
+            {
+                //Don't multiply mouse input by Time.deltaTime
+                float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-				// clamp our pitch rotation
-				_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+                _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
+                _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
 
-				// Update Cinemachine camera target pitch
-				CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+                // clamp our pitch rotation
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-				// rotate the player left and right
-				transform.Rotate(Vector3.up * _rotationVelocity);
-			}
+                // Update Cinemachine camera target pitch
+                CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+
+                // rotate the player left and right
+                transform.Rotate(Vector3.up * _rotationVelocity);
+            }
         }
 
         private void Move()
@@ -462,11 +480,11 @@ namespace StarterAssets
         {
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
             _currentJumps++;
-            if(_currentJumps >= MaxJumps)
+            if (_currentJumps >= MaxJumps)
             {
                 _doubleJumpAvailable = false;
             }
-            
+
 
             if (_hasAnimator)
             {
@@ -581,7 +599,7 @@ namespace StarterAssets
 
                 case "maxjumps":
                     // Increase MaxJumps by value (cast to int if necessary)
-                    MaxJumps += (int) value;
+                    MaxJumps += (int)value;
                     Debug.Log("MaxJumps increased to " + MaxJumps);
                     break;
 

@@ -126,4 +126,27 @@ public class EnemyAI : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+
+    // add collision detection so enemy can take damage from lemons
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Collidables"))
+        {
+            Rigidbody lemonRb = collision.rigidbody;
+            if (lemonRb != null)
+            {
+                float impactForce = collision.relativeVelocity.magnitude * lemonRb.mass;
+
+                if (impactForce > 10f) // Ignore light bumps
+                {
+                    float damage = impactForce * 0.5f; // Scale damage based on force
+                    Damaged(damage);
+
+                    Debug.Log($"Enemy hit by lemon for {damage} damage (force: {impactForce})");
+                }
+            }
+        }
+    }
+
 }
