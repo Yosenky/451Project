@@ -2,11 +2,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using StarterAssets;
+using UnityEngine.AI; // Needed for NavMesh
+using System.Collections;
 
 public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight }
 
 public class GameController : MonoBehaviour
 {
+
+    [Header("Chest Spawning")]
+    public GameObject chestPrefab;
+    public float chestSpawnInterval = 25f;
+    public float chestSpawnRadius = 25f; // how far from center can chests spawn
+    public Transform levelCenter; // use an empty GameObject as a spawn origin
+
+
     public static GameController Instance;
     public int chestPrice = 0; // set to 0 for testing upgrades
     public GameObject upgradeInterface;
@@ -36,6 +46,12 @@ public class GameController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
+    void Start()
+    {
+        StartCoroutine(SpawnChestRoutine());
+    }
+
 
     public void InteractChest(Chest chest)
     {
@@ -230,4 +246,40 @@ public class GameController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
+    IEnumerator SpawnChestRoutine()
+    {
+        while (true)
+        {
+            SpawnChestOnNavMesh();
+            yield return new WaitForSecondsRealtime(chestSpawnInterval);
+
+        }
+    }
+
+    void SpawnChestOnNavMesh()
+    {
+        if (chestPrefab == null || levelCenter == null) return;
+
+        Vector3 randomPoint = levelCenter.position + Random.insideUnitSphere * chestSpawnRadius;
+        randomPoint.y = levelCenter.position.y;
+
+        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+        {
+            GameObject chest = Instantiate(chestPrefab, hit.position, Quaternion.identity);
+            print("Spawned chest!");
+            Collider chestCollider = chest.GetComponent<Collider>();
+            if (chestCollider != null)
+            {
+                // Raise the chest so its bottom touches the ground
+                float bottomY = chestCollider.bounds.min.y;
+                float desiredY = hit.position.y;
+                float offset = desiredY - bottomY;
+
+                chest.transform.position += new Vector3(0, offset, 0);
+            }
+        }
+    }
+
+
 }

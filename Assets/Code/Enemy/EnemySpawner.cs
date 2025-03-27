@@ -53,7 +53,7 @@ public class EnemySpawner : MonoBehaviour
             spawnInterval = Mathf.Max(spawnInterval - spawnIntervalDecrease, minSpawnInterval); // Reduce spawn interval but never below min
             statMultiplier += statMultiplierIncrease;
 
-            Debug.Log($"Difficulty Increased! Max Enemies: {maxEnemies}, Spawn Interval: {spawnInterval}");
+            //Debug.Log($"Difficulty Increased! Max Enemies: {maxEnemies}, Spawn Interval: {spawnInterval}");
         }
     }
 
@@ -77,7 +77,7 @@ public class EnemySpawner : MonoBehaviour
             activeEnemies.Add(newEnemy);
             ScaleEnemyStats(newEnemy);
 
-            Debug.Log("Spawned " + chosenEnemyPrefab.name + " at position: " + spawnPosition);
+            //Debug.Log("Spawned " + chosenEnemyPrefab.name + " at position: " + spawnPosition);
         }
 
 

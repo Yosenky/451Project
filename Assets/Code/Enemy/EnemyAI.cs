@@ -117,7 +117,7 @@ public class EnemyAI : MonoBehaviour
             if (playerController != null)
             {
                 playerController.AddMoney(moneyReward);
-                Debug.Log("Player received $" + moneyReward + " for killing EnemyAI.");
+                //Debug.Log("Player received $" + moneyReward + " for killing EnemyAI.");
             }
         }
     }
@@ -143,7 +143,7 @@ public class EnemyAI : MonoBehaviour
                     float damage = impactForce * 0.5f; // Scale damage based on force
                     Damaged(damage);
 
-                    Debug.Log($"Enemy hit by lemon for {damage} damage (force: {impactForce})");
+                    //Debug.Log($"Enemy hit by lemon for {damage} damage (force: {impactForce})");
                 }
             }
         }

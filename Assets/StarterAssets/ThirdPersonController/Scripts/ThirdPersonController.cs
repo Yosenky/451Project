@@ -124,6 +124,8 @@ namespace StarterAssets
         private float _baseMoveSpeed;
         private float _currentJumps; // num of jumps taken currently
         private Weapon weapon;
+        private Chest _interactableChest; // the chest we're currently near
+
         public List<int> items;
 
         public int gold;
@@ -231,35 +233,9 @@ namespace StarterAssets
             // Interacting with chests
             if (_input.interact)
             {
-                Vector2 mousePosition = Mouse.current.position.ReadValue();
-                Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 15f))
+                if (_interactableChest != null)
                 {
-                    //print("Interacted with " + hit.transform.name + " from " + hit.distance + "m.");
-
-                    // Always find the Chest component on the parent
-                    Chest targetChest = hit.transform.GetComponentInParent<Chest>();
-                    if (targetChest) targetChest.Interact();
-
-                    // find the microwave door if there is any
-                    MicrowaveDoor microwaveDoor = hit.transform.GetComponent<MicrowaveDoor>();
-                    if (microwaveDoor) microwaveDoor.Toggle();
-
-                    // kicking the lemon
-                    if (hit.collider.CompareTag("Collidables"))
-                    {
-                        Rigidbody lemonRb = hit.collider.GetComponent<Rigidbody>();
-                        if (lemonRb != null)
-                        {
-                            Vector3 kickDirection = ray.direction.normalized;
-                            float kickForce = 50f;
-
-                            lemonRb.AddForce(kickDirection * kickForce, ForceMode.Impulse);
-                            Debug.Log("Player kicked lemon with force " + kickForce);
-                        }
-                    }
+                    _interactableChest.Interact();
                 }
 
                 _input.interact = false; // Reset interaction
@@ -588,19 +564,19 @@ namespace StarterAssets
 
                 case "damage":
                     weapon.damage += value;
-                    Debug.Log("Weapon damage upgraded to " + weapon.damage);
+                    //Debug.Log("Weapon damage upgraded to " + weapon.damage);
                     break;
 
                 case "attackspeed":
 
                     weapon.attackSpeed += value;
-                    Debug.Log("Weapon attack speed upgraded to " + weapon.attackSpeed);
+                    //Debug.Log("Weapon attack speed upgraded to " + weapon.attackSpeed);
                     break;
 
                 case "maxjumps":
                     // Increase MaxJumps by value (cast to int if necessary)
                     MaxJumps += (int)value;
-                    Debug.Log("MaxJumps increased to " + MaxJumps);
+                    //Debug.Log("MaxJumps increased to " + MaxJumps);
                     break;
 
                 case "healthregen":
@@ -613,12 +589,23 @@ namespace StarterAssets
                     break;
 
                 default:
-                    Debug.LogWarning($"UpgradePlayer: Invalid stat name '{statName}'");
+                    //Debug.LogWarning($"UpgradePlayer: Invalid stat name '{statName}'");
                     return;
             }
 
             // Notify UI to update stats display
             UIController.Instance.UpdateStatsDisplay();
+        }
+
+
+        public void SetInteractableChest(Chest chest)
+        {
+            _interactableChest = chest;
+        }
+
+        public void ClearInteractableChest()
+        {
+            _interactableChest = null;
         }
 
 
