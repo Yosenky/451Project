@@ -94,6 +94,8 @@ public class EnemySpawner : MonoBehaviour
             ranged.health *= statMultiplier;
             ranged.attackdamage = Mathf.RoundToInt(ranged.attackdamage * statMultiplier);
             ranged.agent.speed *= statMultiplier;
+            ranged.projectileSpeed *= statMultiplier;
+            ranged.attackRange *= statMultiplier;
         }
         else if (enemy.TryGetComponent<EnemyAI>(out EnemyAI melee)) 
         {

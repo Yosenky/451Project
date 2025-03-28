@@ -13,11 +13,26 @@ public class BoomerangBullet : MonoBehaviour
     private Rigidbody rb;
     private float timer = 0f;
 
+    public AudioClip shootSound;  
+    public AudioClip hitSound;    
+    private AudioSource audioSource;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         // Fire forward from the current orientation
         rb.velocity = transform.forward * speed;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // Play the throwing sound
+        if (shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
     }
 
     void Update()
@@ -48,6 +63,11 @@ public class BoomerangBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+
+            if (hitSound != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+            }
             // Get the EnemyAI script on the enemy
             EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
             RangedLangsat rangedLangsat = collision.gameObject.GetComponent<RangedLangsat>();

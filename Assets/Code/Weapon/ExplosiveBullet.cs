@@ -20,9 +20,19 @@ public class ExplosiveBullet : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
+            RangedLangsat rangedLangsat = collision.gameObject.GetComponent<RangedLangsat>();
+            Rollingenemy rollingenemy = collision.gameObject.GetComponent<Rollingenemy>();
             if (enemyAI != null)
             {
                 enemyAI.Damaged(Mathf.RoundToInt(damage));
+            }
+            if (rangedLangsat != null)
+            {
+                rangedLangsat.Damaged(Mathf.RoundToInt(damage));
+            }
+            if (rollingenemy != null)
+            {
+                rollingenemy.Damaged(Mathf.RoundToInt(damage));
             }
         }
 
@@ -32,9 +42,19 @@ public class ExplosiveBullet : MonoBehaviour
             if (nearbyObject.CompareTag("Enemy"))
             {
                 EnemyAI enemyAI = nearbyObject.GetComponent<EnemyAI>();
+                RangedLangsat rangedLangsat = nearbyObject.GetComponent<RangedLangsat>();
+                Rollingenemy rollingenemy = nearbyObject.GetComponent<Rollingenemy>();
                 if (enemyAI != null)
                 {
                     enemyAI.Damaged(Mathf.RoundToInt(damage));
+                }
+                if (rangedLangsat != null)
+                {
+                    rangedLangsat.Damaged(Mathf.RoundToInt(damage));
+                }
+                if (rollingenemy != null)
+                {
+                    rollingenemy.Damaged(Mathf.RoundToInt(damage));
                 }
             }
         }

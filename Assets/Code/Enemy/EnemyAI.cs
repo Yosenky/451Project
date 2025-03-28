@@ -26,11 +26,17 @@ public class EnemyAI : MonoBehaviour
     public Animator animator;
     public int moneyReward = 10; // Money reward for killing this enemy
 
+
+    public AudioSource audioSource;
+    public AudioClip walkSound;
+
+
     private void Awake()
     {
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -41,6 +47,16 @@ public class EnemyAI : MonoBehaviour
         if (playerInSightRange && !PlayerInAttackRange) Chase();
         if (playerInSightRange && PlayerInAttackRange) Attack();
         animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f);
+        if (agent.velocity.magnitude > 0.1f && !audioSource.isPlaying)
+        {
+            audioSource.clip = walkSound;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+        else if (!(agent.velocity.magnitude > 0.1f) && audioSource.clip == walkSound)
+        {
+            audioSource.Stop();
+        }
     }
 
     private void Chase()

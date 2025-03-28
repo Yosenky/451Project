@@ -21,6 +21,8 @@ public class Ball : MonoBehaviour
         {
             // Get the EnemyAI script on the enemy
             EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
+            RangedLangsat rangedLangsat = collision.gameObject.GetComponent<RangedLangsat>();
+            Rollingenemy rollingenemy = collision.gameObject.GetComponent<Rollingenemy>();
             if (enemyAI != null)
             {
                 // Call the Damaged method with the boomerang’s damage
@@ -28,9 +30,16 @@ public class Ball : MonoBehaviour
                 //       so we cast if boomerang damage is a float
                 enemyAI.Damaged(Mathf.RoundToInt(damage));
             }
+            if (rangedLangsat != null)
+            {
+                rangedLangsat.Damaged(Mathf.RoundToInt(damage));
+            }
+            if (rollingenemy != null)
+            {
+                rollingenemy.Damaged(Mathf.RoundToInt(damage));
+            }
 
-          
-            
+
         }
         Destroy(gameObject);
 

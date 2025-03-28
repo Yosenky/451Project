@@ -18,6 +18,7 @@ public class RangedLangsat : MonoBehaviour
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public int attackdamage;
+    public float projectileSpeed = 10f;
 
     // States to see if any of these conditions are met
     public float sightRange, attackRange;
@@ -76,7 +77,7 @@ public class RangedLangsat : MonoBehaviour
             if (rb != null)
             {
                 Vector3 direction = (player.position - projectileSpawnPoint.position).normalized;
-                rb.velocity = direction * 10f; // Adjust speed 
+                rb.velocity = direction * projectileSpeed; // Adjust speed 
             }
         }
     }
