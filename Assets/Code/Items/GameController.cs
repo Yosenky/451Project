@@ -5,7 +5,7 @@ using StarterAssets;
 using UnityEngine.AI; // Needed for NavMesh
 using System.Collections;
 
-public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight }
+public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight,RareIncreaseMaxHealth, RareIncreaseSpeed, RareIncreaseSprintSpeed, RareIncreaseDamage, RareIncreaseAttackSpeed }
 
 public class GameController : MonoBehaviour
 {
@@ -91,17 +91,37 @@ public class GameController : MonoBehaviour
         { 
             UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed, 
             UpgradeType.IncreaseDamage, UpgradeType.IncreaseAttackSpeed, UpgradeType.IncreaseMaxJumps, 
-            UpgradeType.IncreaseHealthRegenRate, UpgradeType.IncreaseJumpHeight 
+            UpgradeType.IncreaseHealthRegenRate, UpgradeType.IncreaseJumpHeight,UpgradeType.RareIncreaseMaxHealth, UpgradeType.RareIncreaseSpeed, UpgradeType.RareIncreaseSprintSpeed, 
+            UpgradeType.RareIncreaseDamage, UpgradeType.RareIncreaseAttackSpeed,
         };
 
-        List<UpgradeType> upgradeList = new List<UpgradeType>(allUpgrades);
-        // Shuffle the list
-        for (int i = 0; i < upgradeList.Count; i++)
+        List<UpgradeType> availableUpgrades = new List<UpgradeType>(allUpgrades);
+        List<UpgradeType> selectedUpgrades = new List<UpgradeType>();
+
+        // Select 3 unique upgrades using weighted random selection.
+        for (int i = 0; i < 3; i++)
         {
-            UpgradeType temp = upgradeList[i];
-            int randomIndex = Random.Range(i, upgradeList.Count);
-            upgradeList[i] = upgradeList[randomIndex];
-            upgradeList[randomIndex] = temp;
+            float totalWeight = 0f;
+            foreach (UpgradeType upgrade in availableUpgrades)
+            {
+                totalWeight += GetUpgradeWeight(upgrade);
+            }
+
+            float randomValue = Random.Range(0f, totalWeight);
+            float accum = 0f;
+            UpgradeType chosen = availableUpgrades[0];
+
+            foreach (UpgradeType upgrade in availableUpgrades)
+            {
+                accum += GetUpgradeWeight(upgrade);
+                if (randomValue <= accum)
+                {
+                    chosen = upgrade;
+                    break;
+                }
+            }
+            selectedUpgrades.Add(chosen);
+            availableUpgrades.Remove(chosen);
         }
 
         // Get container dimensions.
@@ -167,6 +187,31 @@ public class GameController : MonoBehaviour
                     description = "Increase Jump Height";
                     bgColor = Color.blue;
                     break;
+                case UpgradeType.RareIncreaseMaxHealth:
+                    icon = maxHealthUpgradeIcon;
+                    description = "Increase Max Health Significantly";
+                    bgColor = Color.yellow;
+                    break;
+                case UpgradeType.RareIncreaseSpeed:
+                    icon = moveSpeedUpgradeIcon;
+                    description = "Increase Speed Significantly";
+                    bgColor = Color.yellow;
+                    break;
+                case UpgradeType.RareIncreaseSprintSpeed:
+                    icon = sprintSpeedUpgradeIcon;
+                    description = "Increase Sprint Speed Significantly";
+                    bgColor = Color.yellow;
+                    break;
+                case UpgradeType.RareIncreaseDamage:
+                    icon = damageUpgradeIcon;
+                    description = "Increase Damage Significantly";
+                    bgColor = Color.yellow;
+                    break;
+                case UpgradeType.RareIncreaseAttackSpeed:
+                    icon = attackSpeedUpgradeIcon;
+                    description = "Increase Attack Speed Significantly";
+                    bgColor = Color.yellow;
+                    break;
             }
 
             optionPanel.Setup(icon, description, () => UpgradeSelected(selectedUpgrade), bgColor);
@@ -182,7 +227,7 @@ public class GameController : MonoBehaviour
         }
 
         UIController.Instance.AddMoney(-chestPrice);
-        //chestPrice += 10;
+        chestPrice += 10;
 
         switch (upgradeType)
         {
@@ -218,6 +263,17 @@ public class GameController : MonoBehaviour
                 ThirdPersonController.Instance.UpgradePlayer("jumpheight", 0.5f);
                 Debug.Log("Jump Height increased!");
                 break;
+            case UpgradeType.RareIncreaseMaxHealth:
+                ThirdPersonController.Instance.UpgradePlayer("maxhealth", 20);
+                Debug.Log("Rare Max Health increased!");
+                break;
+            case UpgradeType.RareIncreaseSpeed:
+                ThirdPersonController.Instance.UpgradePlayer("movespeed", 1.5f);
+                Debug.Log("Rare Speed increased!");
+                break;
+            case UpgradeType.RareIncreaseSprintSpeed:
+                ThirdPersonController.Instance.UpgradePlayer("sprintspeed", .4f);
+                Debug.Log("Rare Sprint Speed increased!");
                 break;
             case UpgradeType.RareIncreaseDamage:
                 ThirdPersonController.Instance.UpgradePlayer("damage", 3f);
@@ -289,5 +345,22 @@ public class GameController : MonoBehaviour
         }
     }
 
-
+    private float GetUpgradeWeight(UpgradeType upgrade)
+    {
+        switch (upgrade)
+        {
+            case UpgradeType.RareIncreaseMaxHealth:
+                return 0.5f;
+            case UpgradeType.RareIncreaseSpeed:
+                return 0.5f;
+            case UpgradeType.RareIncreaseSprintSpeed:
+                return 0.5f;
+            case UpgradeType.RareIncreaseDamage:
+                return 0.5f;
+            case UpgradeType.RareIncreaseAttackSpeed:
+                return 0.5f;
+            default:
+                return 1.0f;  // Normal upgrade.
+        }
+    }
 }
