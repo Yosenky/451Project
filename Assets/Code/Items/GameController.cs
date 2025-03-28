@@ -103,7 +103,6 @@ public class GameController : MonoBehaviour
             upgradeList[i] = upgradeList[randomIndex];
             upgradeList[randomIndex] = temp;
         }
-        // End of CHANGED section
 
         // Get container dimensions.
         RectTransform containerRect = upgradeOptionsContainer.GetComponent<RectTransform>();
@@ -113,7 +112,7 @@ public class GameController : MonoBehaviour
         // CHANGED: Instantiate only 3 upgrade option panels from the first 3 random upgrades.
         for (int i = 0; i < 3; i++)
         {
-            UpgradeType selectedUpgrade = upgradeList[i];
+            UpgradeType selectedUpgrade = selectedUpgrades[i];
             GameObject optionObj = Instantiate(upgradeOptionPanelPrefab, upgradeOptionsContainer);
             UpgradeOptionPanel optionPanel = optionObj.GetComponent<UpgradeOptionPanel>();
 
@@ -218,6 +217,15 @@ public class GameController : MonoBehaviour
             case UpgradeType.IncreaseJumpHeight:
                 ThirdPersonController.Instance.UpgradePlayer("jumpheight", 0.5f);
                 Debug.Log("Jump Height increased!");
+                break;
+                break;
+            case UpgradeType.RareIncreaseDamage:
+                ThirdPersonController.Instance.UpgradePlayer("damage", 3f);
+                Debug.Log("Damage increased!");
+                break;
+            case UpgradeType.RareIncreaseAttackSpeed:
+                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.75f);
+                Debug.Log("Attack Speed increased!");
                 break;
         }
 
