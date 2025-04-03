@@ -129,7 +129,6 @@ public class GameController : MonoBehaviour
         float containerWidth = containerRect.rect.width;
         float containerHeight = containerRect.rect.height;
 
-        // CHANGED: Instantiate only 3 upgrade option panels from the first 3 random upgrades.
         for (int i = 0; i < 3; i++)
         {
             UpgradeType selectedUpgrade = selectedUpgrades[i];
@@ -213,10 +212,9 @@ public class GameController : MonoBehaviour
                     bgColor = Color.yellow;
                     break;
             }
-
+         
             optionPanel.Setup(icon, description, () => UpgradeSelected(selectedUpgrade), bgColor);
         }
-        // End of CHANGED section
     }
     void UpgradeSelected(UpgradeType upgradeType)
     {

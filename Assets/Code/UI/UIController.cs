@@ -30,7 +30,7 @@ public class UIController : MonoBehaviour
 
     // Dictionary to store initial stat values
     private Dictionary<string, float> initialStats = new Dictionary<string, float>();
-
+    public GameObject mainUICanvas;
     void Awake()
     {
         if (Instance == null)
@@ -184,6 +184,13 @@ public class UIController : MonoBehaviour
 
         float newHeight = statsVisible ? 400f : 50f;
         statsPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, newHeight);
+    }
+    public void ActivateMainUI()
+    {
+        if (mainUICanvas != null)
+        {
+            mainUICanvas.SetActive(true);
+        }
     }
 
 }
