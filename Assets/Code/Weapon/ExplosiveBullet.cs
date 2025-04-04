@@ -8,11 +8,27 @@ public class ExplosiveBullet : MonoBehaviour
 
     private Rigidbody rb;
 
+    public AudioClip shootSound;
+    public AudioClip hitSound;
+    private AudioSource audioSource;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.velocity = transform.forward * speed;
         Destroy(gameObject, 5f);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // Play the throwing sound
+        if (shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -22,6 +38,11 @@ public class ExplosiveBullet : MonoBehaviour
             EnemyAI enemyAI = collision.gameObject.GetComponent<EnemyAI>();
             RangedLangsat rangedLangsat = collision.gameObject.GetComponent<RangedLangsat>();
             Rollingenemy rollingenemy = collision.gameObject.GetComponent<Rollingenemy>();
+
+            if (hitSound != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+            }
             if (enemyAI != null)
             {
                 enemyAI.Damaged(Mathf.RoundToInt(damage));

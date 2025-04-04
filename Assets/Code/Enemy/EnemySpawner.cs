@@ -90,12 +90,13 @@ public class EnemySpawner : MonoBehaviour
         
         if (enemy.TryGetComponent<RangedLangsat>(out RangedLangsat ranged))
         {
-            enemy.transform.localScale *= 1f + (statMultiplier - 1f) * 0.5f;
+           
             ranged.health *= statMultiplier;
             ranged.attackdamage = Mathf.RoundToInt(ranged.attackdamage * statMultiplier);
             ranged.agent.speed *= statMultiplier;
             ranged.projectileSpeed *= statMultiplier;
             ranged.attackRange *= statMultiplier;
+            ActivateDifficultyAttachments(enemy, statMultiplier);
         }
         else if (enemy.TryGetComponent<EnemyAI>(out EnemyAI melee)) 
         {
@@ -117,10 +118,10 @@ public class EnemySpawner : MonoBehaviour
         }
         else if (enemy.TryGetComponent<Rollingenemy>(out Rollingenemy explodey)) 
         {
-            enemy.transform.localScale *= 1f + (statMultiplier - 1f) * 0.5f;
+            
             explodey.health *= statMultiplier;
             explodey.explosionDamage = Mathf.RoundToInt(explodey.explosionDamage * statMultiplier);
-            
+            ActivateDifficultyAttachments(enemy, statMultiplier);
         }
     }
 
@@ -149,5 +150,36 @@ public class EnemySpawner : MonoBehaviour
             return new Color(1f, 0.5f, 0f); 
         else
             return Color.red;
+    }
+
+    void ActivateDifficultyAttachments(GameObject enemy, float difficulty)
+    {
+        Transform easyAttachment = null;
+        Transform mediumAttachment = null;
+        Transform hardAttachment = null;
+
+        // Iterate over child objects and assign them to difficulty tiers
+        foreach (Transform child in enemy.transform)
+        {
+            if (child.CompareTag("DifficultyEasy"))
+                easyAttachment = child;
+            else if (child.CompareTag("DifficultyMedium"))
+                mediumAttachment = child;
+            else if (child.CompareTag("DifficultyHard"))
+                hardAttachment = child;
+        }
+
+        // Disable all first
+        if (easyAttachment) easyAttachment.gameObject.SetActive(false);
+        if (mediumAttachment) mediumAttachment.gameObject.SetActive(false);
+        if (hardAttachment) hardAttachment.gameObject.SetActive(false);
+
+        // Enable the appropriate attachment
+        if (difficulty < 1.5f && easyAttachment)
+            easyAttachment.gameObject.SetActive(true);
+        else if (difficulty < 2.5f && mediumAttachment)
+            mediumAttachment.gameObject.SetActive(true);
+        else if (hardAttachment)
+            hardAttachment.gameObject.SetActive(true);
     }
 }

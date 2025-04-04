@@ -7,6 +7,9 @@ TagManager:
   - CinemachineTarget
   - Enemy
   - Collidables
+  - DifficultyEasy
+  - DifficultyMedium
+  - DifficultyHard
   layers:
   - Default
   - TransparentFX
