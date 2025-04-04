@@ -238,6 +238,31 @@ namespace StarterAssets
                     _interactableChest.Interact();
                 }
 
+                //DO NOT REMOVE - functionality for interacting with the microwave door and lemon 
+                Vector2 mousePosition = Mouse.current.position.ReadValue();
+                Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+                RaycastHit hit;
+
+                if(Physics.Raycast(ray, out hit, 20f)){
+                    // find the microwave door if there is any
+                    MicrowaveDoor microwaveDoor = hit.transform.GetComponent<MicrowaveDoor>();
+                    if (microwaveDoor) microwaveDoor.Toggle();
+
+                    // kicking the lemon
+                    if (hit.collider.CompareTag("Collidables"))
+                    {
+                        Rigidbody lemonRb = hit.collider.GetComponent<Rigidbody>();
+                        if (lemonRb != null)
+                        {
+                            Vector3 kickDirection = ray.direction.normalized;
+                            float kickForce = 200f;
+
+                            lemonRb.AddForce(kickDirection * kickForce, ForceMode.Impulse);
+                            Debug.Log("Player kicked lemon with force " + kickForce);
+                        }
+                    }
+                }
+
                 _input.interact = false; // Reset interaction
             }
 

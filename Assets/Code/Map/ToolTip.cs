@@ -24,8 +24,8 @@ public class FloatingTip3D : MonoBehaviour
         // Make the canvas face the player
         if (playerCamera != null)
         {
-            transform.LookAt(playerCamera.transform);
-            transform.Rotate(0, 180, 0); // Flip if it's backward
+            //transform.LookAt(playerCamera.transform);
+            //transform.Rotate(0, 180, 0); // Flip if it's backward
         }
     }
 

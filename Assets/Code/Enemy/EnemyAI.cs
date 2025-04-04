@@ -154,7 +154,7 @@ public class EnemyAI : MonoBehaviour
             {
                 float impactForce = collision.relativeVelocity.magnitude * lemonRb.mass;
 
-                if (impactForce > 10f) // Ignore light bumps
+                if (impactForce > 8f) // Ignore light bumps
                 {
                     float damage = impactForce * 0.5f; // Scale damage based on force
                     Damaged(damage);

@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6544736228070937645
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1292017381678449360, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1340541719380434750, guid: f58e122f95f9fda4c80da1e95a2f7883, type: 3}
+    - target: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_Name
+      value: TomatoCollectible
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908813211220837476, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f91e85056688a7240828809076135d3b, type: 2}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012364655030804283, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7730770136826784833, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -1340541719380434750, guid: f58e122f95f9fda4c80da1e95a2f7883, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2954250491296197728}
+  m_SourcePrefab: {fileID: 100100000, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+--- !u!1 &8436406102181076198 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+  m_PrefabInstance: {fileID: 6544736228070937645}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-2954250491296197728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436406102181076198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242ae16f0e7bf48c391c49f22f276d9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: {x: 0, y: 50, z: 0}
