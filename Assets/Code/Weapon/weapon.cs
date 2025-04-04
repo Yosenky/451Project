@@ -1,6 +1,7 @@
 using UnityEngine;
 using StarterAssets; 
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 
 
@@ -38,7 +39,34 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        
+        if (Input.GetMouseButtonDown(0))
+        {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+
+            if (results.Count == 0)
+            {
+                Debug.Log("Raycast hit NOTHING");
+            }
+            else
+            {
+                foreach (var result in results)
+                {
+                    Debug.Log("Raycast hit: " + result.gameObject.name);
+                }
+            }
+        
+        }
+        
+
+        // Don't shoot when paused
+        if (Time.timeScale == 0f)
             return;
 
         attackCooldown -= Time.deltaTime;
@@ -103,12 +131,21 @@ public class Weapon : MonoBehaviour
     {
         if (boomerangPrefab && shootPoint)
         {
-            GameObject boomerang = Instantiate(boomerangPrefab, shootPoint.position, shootPoint.rotation);
+            Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            Vector3 direction = ray.direction;
+
+            GameObject boomerang = Instantiate(boomerangPrefab, shootPoint.position, Quaternion.LookRotation(direction));
             BoomerangBullet bb = boomerang.GetComponent<BoomerangBullet>();
             if (bb != null)
             {
                 bb.damage = damage;
-                bb.shooter = shootPoint;  // Let the boomerang know where to return
+                bb.shooter = shootPoint;
+            }
+
+            Rigidbody rb = boomerang.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = direction * bulletSpeed;
             }
         }
     }
@@ -117,17 +154,22 @@ public class Weapon : MonoBehaviour
     {
         if (explosivePrefab && shootPoint)
         {
-            GameObject bullet = Instantiate(explosivePrefab, shootPoint.position, shootPoint.rotation);
+            Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            Vector3 direction = ray.direction;
+
+            GameObject bullet = Instantiate(explosivePrefab, shootPoint.position, Quaternion.LookRotation(direction));
             ExplosiveBullet bulletScript = bullet.GetComponent<ExplosiveBullet>();
             if (bulletScript != null)
             {
                 bulletScript.damage = damage;
                 bulletScript.speed = bulletSpeed;
             }
-        }
-        else
-        {
-            Debug.LogWarning("ExplosivePrefab or ShootPoint not assigned.");
+
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.velocity = direction * bulletSpeed;
+            }
         }
     }
 }

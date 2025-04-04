@@ -47,7 +47,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         maxHealthWidth = healthBarFill.rect.width;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
 
         // Store initial player stats
         if (ThirdPersonController.Instance != null)

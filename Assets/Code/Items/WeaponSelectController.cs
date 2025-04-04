@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public enum WeaponType 
         {
@@ -115,9 +116,17 @@ public class WeaponSelectController : MonoBehaviour
         // Hide the weapon select interface and resume gameplay.
         weaponSelectInterface.SetActive(false);
         Time.timeScale = 1f;
+        // Delay cursor lock to avoid interrupting UI click
+        StartCoroutine(LockCursorNextFrame());
+    }
+
+    IEnumerator LockCursorNextFrame()
+    {
+        yield return null; // wait one frame
+        Debug.Log("LOCKING");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    
+
 }

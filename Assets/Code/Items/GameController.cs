@@ -43,8 +43,8 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     void Start()
@@ -291,6 +291,7 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
         Time.timeScale = 1f;
+        Debug.Log("Locking cursor due to upgrade");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -305,6 +306,7 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
         Time.timeScale = 1f;
+        Debug.Log("Locking cursor due to canceling upgrade");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
