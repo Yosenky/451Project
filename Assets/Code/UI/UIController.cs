@@ -24,9 +24,15 @@ public class UIController : MonoBehaviour
     public RectTransform statsPanel;               // The full panel containing statsText + toggleText
     public TextMeshProUGUI toggleText;             // The "Press Tab to Hide/Expand" text
     public GameObject statsTextObject;             // The actual text box showing stats
-    private Vector2 expandedSize = new Vector2(325, 400); 
+    private Vector2 expandedSize = new Vector2(325, 400);
     private Vector2 collapsedSize = new Vector2(325, 50);
     private bool statsVisible = true;
+
+    // collectible panels
+    // public RectTransform collectiblePanel;
+    // public TextMeshProUGUI collectibleText;
+    // public GameObject collectibleIconPrefab;
+
 
     // Dictionary to store initial stat values
     private Dictionary<string, float> initialStats = new Dictionary<string, float>();
@@ -192,5 +198,12 @@ public class UIController : MonoBehaviour
             mainUICanvas.SetActive(true);
         }
     }
+
+    // to add a collectible icon to the UI
+    public void AddCollectedItem(string id, Sprite icon = null)
+    {
+       // TODO: do it 
+    }
+
 
 }

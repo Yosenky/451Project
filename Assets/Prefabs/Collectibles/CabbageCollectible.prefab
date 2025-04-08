@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4154902595240262072
+--- !u!1001 &1880067877078444398
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11,10 +11,10 @@ PrefabInstance:
     - target: {fileID: 1292017381678449360, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4970989848755135003, guid: 42553c149189b6e4da2765ce5484d9be, type: 3}
+      objectReference: {fileID: 3760286561286826541, guid: 48d4b1e2ed74a0a4aa162a67b307fe14, type: 3}
     - target: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       propertyPath: m_Name
-      value: CarrotCollectible
+      value: BaseCollectible Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4908813211220837476, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -63,27 +63,27 @@ PrefabInstance:
     - target: {fileID: 7730770136826784833, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4970989848755135003, guid: 42553c149189b6e4da2765ce5484d9be, type: 3}
+      objectReference: {fileID: 3760286561286826541, guid: 48d4b1e2ed74a0a4aa162a67b307fe14, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -6692789717693832445}
+      addedObject: {fileID: -2893388927529393348}
   m_SourcePrefab: {fileID: 100100000, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
---- !u!1 &1616402695279112563 stripped
+--- !u!1 &3877853882904125861 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
-  m_PrefabInstance: {fileID: 4154902595240262072}
+  m_PrefabInstance: {fileID: 1880067877078444398}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-6692789717693832445
+--- !u!114 &-2893388927529393348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1616402695279112563}
+  m_GameObject: {fileID: 3877853882904125861}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 242ae16f0e7bf48c391c49f22f276d9b, type: 3}

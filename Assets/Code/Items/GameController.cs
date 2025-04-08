@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine.AI; // Needed for NavMesh
 using System.Collections;
+using System;
 
-public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight,RareIncreaseMaxHealth, RareIncreaseSpeed, RareIncreaseSprintSpeed, RareIncreaseDamage, RareIncreaseAttackSpeed }
+public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight, RareIncreaseMaxHealth, RareIncreaseSpeed, RareIncreaseSprintSpeed, RareIncreaseDamage, RareIncreaseAttackSpeed }
 
 public class GameController : MonoBehaviour
 {
@@ -33,6 +34,13 @@ public class GameController : MonoBehaviour
     public Sprite healthRegenUpgradeIcon;
     public Sprite jumpHeightUpgradeIcon;
 
+    // collectible system variables
+    public GameObject[] collectiblePrefabs;
+    public int collectibleCount;
+    public float collectibleSpawnRadius = 10f; // how far from center can collectibles spawn
+    public List<String> collectedCollectibles = new List<String>();
+
+
     void Awake()
     {
         if (Instance == null)
@@ -50,6 +58,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         StartCoroutine(SpawnChestRoutine());
+        SpawnCollectibles();
     }
 
 
@@ -87,11 +96,11 @@ public class GameController : MonoBehaviour
         }
 
         // CHANGED: Prepare a list of all available upgrade types and shuffle it.
-        UpgradeType[] allUpgrades = 
-        { 
-            UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed, 
-            UpgradeType.IncreaseDamage, UpgradeType.IncreaseAttackSpeed, UpgradeType.IncreaseMaxJumps, 
-            UpgradeType.IncreaseHealthRegenRate, UpgradeType.IncreaseJumpHeight,UpgradeType.RareIncreaseMaxHealth, UpgradeType.RareIncreaseSpeed, UpgradeType.RareIncreaseSprintSpeed, 
+        UpgradeType[] allUpgrades =
+        {
+            UpgradeType.IncreaseMaxHealth, UpgradeType.IncreaseSpeed, UpgradeType.IncreaseSprintSpeed,
+            UpgradeType.IncreaseDamage, UpgradeType.IncreaseAttackSpeed, UpgradeType.IncreaseMaxJumps,
+            UpgradeType.IncreaseHealthRegenRate, UpgradeType.IncreaseJumpHeight,UpgradeType.RareIncreaseMaxHealth, UpgradeType.RareIncreaseSpeed, UpgradeType.RareIncreaseSprintSpeed,
             UpgradeType.RareIncreaseDamage, UpgradeType.RareIncreaseAttackSpeed,
         };
 
@@ -107,7 +116,7 @@ public class GameController : MonoBehaviour
                 totalWeight += GetUpgradeWeight(upgrade);
             }
 
-            float randomValue = Random.Range(0f, totalWeight);
+            float randomValue = UnityEngine.Random.Range(0f, totalWeight);
             float accum = 0f;
             UpgradeType chosen = availableUpgrades[0];
 
@@ -212,7 +221,7 @@ public class GameController : MonoBehaviour
                     bgColor = Color.yellow;
                     break;
             }
-         
+
             optionPanel.Setup(icon, description, () => UpgradeSelected(selectedUpgrade), bgColor);
         }
     }
@@ -325,7 +334,7 @@ public class GameController : MonoBehaviour
     {
         if (chestPrefab == null || levelCenter == null) return;
 
-        Vector3 randomPoint = levelCenter.position + Random.insideUnitSphere * chestSpawnRadius;
+        Vector3 randomPoint = levelCenter.position + UnityEngine.Random.insideUnitSphere * chestSpawnRadius;
         randomPoint.y = levelCenter.position.y;
 
         if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
@@ -361,6 +370,56 @@ public class GameController : MonoBehaviour
                 return 0.5f;
             default:
                 return 1.0f;  // Normal upgrade.
+        }
+    }
+
+    // spawn collectibles
+    public void SpawnCollectibles()
+{
+    float halfSize = collectibleSpawnRadius;
+
+    for (int i = 0; i < collectibleCount; i++)
+    {
+        // Generate a position within square map bounds
+        Vector3 randomPos = new Vector3(
+            UnityEngine.Random.Range(-halfSize, halfSize),
+            0f,
+            UnityEngine.Random.Range(-halfSize, halfSize)
+        ) + levelCenter.position;
+
+        // Use NavMesh to ensure valid placement
+        if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+        {
+            Vector3 spawnPos = hit.position + Vector3.up * 1.1f; // raise slightly above ground
+
+            // Choose a random collectible
+            GameObject prefab = collectiblePrefabs[UnityEngine.Random.Range(0, collectiblePrefabs.Length)];
+            GameObject collectibleObj = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+            // Set ID/type
+            Collectible collectible = collectibleObj.GetComponent<Collectible>();
+            if (collectible != null)
+            {
+                collectible.collectibleType = prefab.name;
+            }
+
+            Debug.Log("Spawning collectible: " + prefab.name);
+        }
+    }
+}
+
+    // collect the collectible 
+    public void CollectCollectible(string collectibleName)
+    {
+        if (!collectedCollectibles.Contains(collectibleName))
+        {
+            collectedCollectibles.Add(collectibleName);
+            Debug.Log("Collected: " + collectibleName);
+            //TODO: do something else with the collectible 
+        }
+        else
+        {
+            Debug.Log("Already collected: " + collectibleName);
         }
     }
 }

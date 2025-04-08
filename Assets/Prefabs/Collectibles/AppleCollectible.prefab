@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AppleCollectible
       objectReference: {fileID: 0}
+    - target: {fileID: 3442914273695402187, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4908813211220837476, guid: 1dd5ec7d67f7f493489c73b69e117a31, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
