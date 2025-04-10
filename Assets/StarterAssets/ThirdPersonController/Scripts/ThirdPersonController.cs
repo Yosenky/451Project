@@ -20,6 +20,17 @@ namespace StarterAssets
         // Make singleton
         public static ThirdPersonController Instance;
 
+        [Header("Egg Materials Based on Damage")]
+        public Material EggMaterialFull;
+        public Material EggMaterial20PercentDamaged;
+        public Material EggMaterial40PercentDamaged;
+        public Material EggMaterial60PercentDamaged;
+        public Material EggMaterial80PercentDamaged;
+        public Material EggMaterial95PercentDamaged;
+
+        private MeshRenderer _eggRenderer;
+        private float _lastHealth;
+
         [Header("Player Stats")]
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -211,6 +222,20 @@ namespace StarterAssets
 
             // initialize item list to be empty
             items = new List<int>();
+
+            // Find the Egg's MeshRenderer
+            Transform eggTransform = transform.Find("Egg");
+            if (eggTransform != null)
+            {
+                _eggRenderer = eggTransform.GetComponent<MeshRenderer>();
+            }
+            else
+            {
+                Debug.LogError("Egg child object not found!");
+            }
+
+            UpdateEggMaterial();
+            _lastHealth = _health;
         }
 
         private void Update()
@@ -277,11 +302,15 @@ namespace StarterAssets
                     _health += regenAmount;
                     _health = Mathf.Min(_health, MaxHealth); // Clamp to MaxHealth
                     _regenTimer -= Mathf.Floor(_regenTimer); // Retain fractional overflow
-
                     UIController.Instance.SetHealth((int)_health);
                 }
             }
 
+            if (Mathf.Abs(_health - _lastHealth) > 0.01f)
+            {
+                UpdateEggMaterial();
+                _lastHealth = _health;
+            }
 
         }
 
@@ -297,6 +326,45 @@ namespace StarterAssets
             {
                 Die();
             }
+        }
+
+        private void UpdateEggMaterial()
+        {
+            if (_eggRenderer == null) return;
+
+            float healthPercent = (_health / MaxHealth) * 100f;
+
+            if (healthPercent == 100f)
+            {
+                _eggRenderer.material = EggMaterialFull;
+                Debug.Log("Full");
+            }
+            else if (healthPercent < 100f && healthPercent >= 80f)
+            {
+                _eggRenderer.material = EggMaterial20PercentDamaged;
+                Debug.Log("20%");
+            }
+            else if (healthPercent < 80f && healthPercent > 60f)
+            {
+                _eggRenderer.material = EggMaterial40PercentDamaged;
+                Debug.Log("40%");
+            }
+            else if (healthPercent <= 60f && healthPercent >= 40f)
+            {
+                _eggRenderer.material = EggMaterial60PercentDamaged;
+                Debug.Log("60%");
+            }
+            else if (healthPercent < 40f && healthPercent >= 20f)
+            {
+                _eggRenderer.material = EggMaterial80PercentDamaged;
+                Debug.Log("80%");
+            }
+            else if (healthPercent <= 5f)
+            {
+                _eggRenderer.material = EggMaterial95PercentDamaged;
+                Debug.Log("95%");
+            }
+
         }
 
         private void Die()

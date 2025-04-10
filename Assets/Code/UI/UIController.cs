@@ -13,6 +13,8 @@ public class UIController : MonoBehaviour
     private float elapsedTime = 0f;
     private string difficulty = "Easy";
     private Color textColor = Color.green;
+    private float originalHealthBarWidth;
+
 
     public TextMeshProUGUI moneyText;
     public int money = 0;
@@ -52,7 +54,8 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        maxHealthWidth = healthBarFill.rect.width;
+        originalHealthBarWidth = healthBarFill.rect.width;
+        maxHealthWidth = originalHealthBarWidth;
         //Cursor.lockState = CursorLockMode.Locked;
 
         // Store initial player stats
@@ -72,6 +75,8 @@ public class UIController : MonoBehaviour
 
         expandedSize = new Vector2(325, 400);
         collapsedSize = new Vector2(325, 50);
+
+
     }
 
     void Update()
@@ -119,16 +124,15 @@ public class UIController : MonoBehaviour
     public void SetMaxHealth(int newMaxHealth)
     {
         maxHealth = newMaxHealth;
-        maxHealthWidth = healthBarFill.rect.width;
-        SetHealth(maxHealth);
+        SetHealth(maxHealth);  // don't touch width here!
     }
 
     public void SetHealth(int currentHealth)
     {
-        if (maxHealth == 0 || maxHealthWidth == 0) return;
+        if (maxHealth == 0 || originalHealthBarWidth == 0) return;
 
         float healthPercentage = Mathf.Clamp((float)currentHealth / maxHealth, 0f, 1f);
-        healthBarFill.sizeDelta = new Vector2(maxHealthWidth * healthPercentage, healthBarFill.sizeDelta.y);
+        healthBarFill.sizeDelta = new Vector2(originalHealthBarWidth * healthPercentage, healthBarFill.sizeDelta.y);
     }
 
     public void GameOver()

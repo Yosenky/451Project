@@ -52,13 +52,13 @@ public class Weapon : MonoBehaviour
 
             if (results.Count == 0)
             {
-                Debug.Log("Raycast hit NOTHING");
+                //Debug.Log("Raycast hit NOTHING");
             }
             else
             {
                 foreach (var result in results)
                 {
-                    Debug.Log("Raycast hit: " + result.gameObject.name);
+                    //Debug.Log("Raycast hit: " + result.gameObject.name);
                 }
             }
         
@@ -85,7 +85,7 @@ public class Weapon : MonoBehaviour
                     ShootExplosiveBullet();
                     break;
             }
-            Debug.Log(selectedWeaponType);
+            //Debug.Log(selectedWeaponType);
             attackCooldown = 1f / attackSpeed;
         }
     }
@@ -93,7 +93,7 @@ public class Weapon : MonoBehaviour
     public void SetWeaponType(WeaponType type)
     {
         selectedWeaponType = type;
-        Debug.Log("Weapon set to: " + type);
+        //Debug.Log("Weapon set to: " + type);
     }
 
     void Shoot()
@@ -123,7 +123,7 @@ public class Weapon : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("BallPrefab or ShootPoint not assigned.");
+            //Debug.LogWarning("BallPrefab or ShootPoint not assigned.");
         }
     }
 

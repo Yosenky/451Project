@@ -234,7 +234,7 @@ public class GameController : MonoBehaviour
         }
 
         UIController.Instance.AddMoney(-chestPrice);
-        chestPrice += 10;
+        //chestPrice += 10;
 
         switch (upgradeType)
         {
@@ -300,7 +300,7 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
         Time.timeScale = 1f;
-        Debug.Log("Locking cursor due to upgrade");
+        //.Log("Locking cursor due to upgrade");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -315,7 +315,7 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
         Time.timeScale = 1f;
-        Debug.Log("Locking cursor due to canceling upgrade");
+        //Debug.Log("Locking cursor due to canceling upgrade");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -340,7 +340,7 @@ public class GameController : MonoBehaviour
         if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 5f, NavMesh.AllAreas))
         {
             GameObject chest = Instantiate(chestPrefab, hit.position, Quaternion.identity);
-            print("Spawned chest!");
+            //print("Spawned chest!");
             Collider chestCollider = chest.GetComponent<Collider>();
             if (chestCollider != null)
             {
@@ -403,7 +403,7 @@ public class GameController : MonoBehaviour
                 collectible.collectibleType = prefab.name;
             }
 
-            Debug.Log("Spawning collectible: " + prefab.name);
+            //Debug.Log("Spawning collectible: " + prefab.name);
         }
     }
 }

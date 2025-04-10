@@ -123,7 +123,7 @@ public class WeaponSelectController : MonoBehaviour
     IEnumerator LockCursorNextFrame()
     {
         yield return null; // wait one frame
-        Debug.Log("LOCKING");
+        //Debug.Log("LOCKING");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

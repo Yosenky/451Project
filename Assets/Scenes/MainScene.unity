@@ -1695,6 +1695,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 4932191797680795850, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3e9ecd7540c4b8345a8e5680a2e19463, type: 2}
     - target: {fileID: 4932191797680795855, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -1739,6 +1743,30 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterialFull
+      value: 
+      objectReference: {fileID: 2100000, guid: 3e9ecd7540c4b8345a8e5680a2e19463, type: 2}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterial20PercentDamaged
+      value: 
+      objectReference: {fileID: 2100000, guid: f3d5d1be272e6714abe63e1ff47d7637, type: 2}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterial40PercentDamaged
+      value: 
+      objectReference: {fileID: 2100000, guid: 986f16b911b8caa439d5542a0edfb8b1, type: 2}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterial60PercentDamaged
+      value: 
+      objectReference: {fileID: 2100000, guid: eeb4489fe80198f43a3e96899615ffd4, type: 2}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterial80PercentDamaged
+      value: 
+      objectReference: {fileID: 2100000, guid: 4d1413637d7bdc249878291cc27708c5, type: 2}
+    - target: {fileID: 6829912450964831053, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
+      propertyPath: EggMaterial95PercentDamaged
+      value: 
+      objectReference: {fileID: 2100000, guid: 9ac6cd5b994a4a148be3721ebc3324f9, type: 2}
     - target: {fileID: 7050738869874056164, guid: 0f198d1247c2eee4d8c46707018dd6cf, type: 3}
       propertyPath: m_Layer
       value: 7

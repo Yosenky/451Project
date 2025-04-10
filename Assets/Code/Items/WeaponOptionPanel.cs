@@ -49,12 +49,12 @@ public class WeaponOptionPanel : MonoBehaviour
             iconRect.sizeDelta = new Vector2(80, 80); // Adjust these values as needed.
         }
 
-        Debug.Log($"WeaponOptionPanel Setup: {description}, Raycast config complete.");
+        //Debug.Log($"WeaponOptionPanel Setup: {description}, Raycast config complete.");
     }
 
     private void HandleSelect()
     {
-        Debug.Log("Weapon selected: " + descriptionText.text);
+        //Debug.Log("Weapon selected: " + descriptionText.text);
         onSelect?.Invoke();
         selectButton.interactable = false;
     }
