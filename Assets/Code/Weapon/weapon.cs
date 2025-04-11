@@ -77,16 +77,19 @@ public class Weapon : MonoBehaviour
             {
                 case WeaponType.Ball:
                     Shoot();
+                    attackCooldown = 1f / attackSpeed;
                     break;
                 case WeaponType.Boomerang:
                     ShootBoomerang();
+                    attackCooldown = 1.5f / attackSpeed;
                     break;
                 case WeaponType.Explosive:
                     ShootExplosiveBullet();
+                    attackCooldown = 2f / attackSpeed;
                     break;
             }
             //Debug.Log(selectedWeaponType);
-            attackCooldown = 1f / attackSpeed;
+            
         }
     }
 
@@ -161,7 +164,7 @@ public class Weapon : MonoBehaviour
             ExplosiveBullet bulletScript = bullet.GetComponent<ExplosiveBullet>();
             if (bulletScript != null)
             {
-                bulletScript.damage = damage;
+                bulletScript.damage = 1.5f*damage;
                 bulletScript.speed = bulletSpeed;
             }
 

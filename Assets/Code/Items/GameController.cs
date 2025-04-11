@@ -47,6 +47,7 @@ public class GameController : MonoBehaviour
     private AudioSource audioSource;
     public GameObject confettiEffectPrefab; 
     public Transform playerTransform;
+    private int chestcount = 0;
 
     void Awake()
     {
@@ -243,7 +244,8 @@ public class GameController : MonoBehaviour
         }
 
         UIController.Instance.AddMoney(-chestPrice);
-        //chestPrice += 10;
+        chestcount+=1;
+        chestPrice += 20*chestcount;
 
         switch (upgradeType)
         {
@@ -260,11 +262,11 @@ public class GameController : MonoBehaviour
                 Debug.Log("Sprint Speed increased!");
                 break;
             case UpgradeType.IncreaseDamage:
-                ThirdPersonController.Instance.UpgradePlayer("damage", 2f);
+                ThirdPersonController.Instance.UpgradePlayer("damage", 3f);
                 Debug.Log("Damage increased!");
                 break;
             case UpgradeType.IncreaseAttackSpeed:
-                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.5f);
+                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.25f);
                 Debug.Log("Attack Speed increased!");
                 break;
             case UpgradeType.IncreaseMaxJumps:
@@ -292,11 +294,11 @@ public class GameController : MonoBehaviour
                 Debug.Log("Rare Sprint Speed increased!");
                 break;
             case UpgradeType.RareIncreaseDamage:
-                ThirdPersonController.Instance.UpgradePlayer("damage", 3f);
+                ThirdPersonController.Instance.UpgradePlayer("damage", 6f);
                 Debug.Log("Damage increased!");
                 break;
             case UpgradeType.RareIncreaseAttackSpeed:
-                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.75f);
+                ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.5f);
                 Debug.Log("Attack Speed increased!");
                 break;
         }
@@ -376,6 +378,8 @@ public class GameController : MonoBehaviour
             case UpgradeType.RareIncreaseDamage:
                 return 0.5f;
             case UpgradeType.RareIncreaseAttackSpeed:
+                return 0.5f;
+            case UpgradeType.IncreaseMaxJumps:
                 return 0.5f;
             default:
                 return 1.0f;  // Normal upgrade.
