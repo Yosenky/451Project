@@ -5,6 +5,8 @@ using StarterAssets;
 using UnityEngine.AI; // Needed for NavMesh
 using System.Collections;
 using System;
+using System.Linq;
+using TMPro;
 
 public enum UpgradeType { IncreaseMaxHealth, IncreaseSpeed, IncreaseSprintSpeed, IncreaseDamage, IncreaseAttackSpeed, IncreaseMaxJumps, IncreaseHealthRegenRate, IncreaseJumpHeight, RareIncreaseMaxHealth, RareIncreaseSpeed, RareIncreaseSprintSpeed, RareIncreaseDamage, RareIncreaseAttackSpeed }
 
@@ -39,7 +41,12 @@ public class GameController : MonoBehaviour
     public int collectibleCount;
     public float collectibleSpawnRadius = 10f; // how far from center can collectibles spawn
     public List<String> collectedCollectibles = new List<String>();
-
+    public TextMeshProUGUI collectibleUIText;
+    [Header("Audio")]
+    public AudioClip collectSound;
+    private AudioSource audioSource;
+    public GameObject confettiEffectPrefab; 
+    public Transform playerTransform;
 
     void Awake()
     {
@@ -59,6 +66,8 @@ public class GameController : MonoBehaviour
     {
         StartCoroutine(SpawnChestRoutine());
         SpawnCollectibles();
+        UpdateCollectibleUI();
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -373,53 +382,93 @@ public class GameController : MonoBehaviour
         }
     }
 
-    // spawn collectibles
+   
     public void SpawnCollectibles()
-{
-    float halfSize = collectibleSpawnRadius;
-
-    for (int i = 0; i < collectibleCount; i++)
     {
-        // Generate a position within square map bounds
-        Vector3 randomPos = new Vector3(
-            UnityEngine.Random.Range(-halfSize, halfSize),
-            0f,
-            UnityEngine.Random.Range(-halfSize, halfSize)
-        ) + levelCenter.position;
+        float halfSize = collectibleSpawnRadius;
 
-        // Use NavMesh to ensure valid placement
-        if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+        // Shuffle collectiblePrefabs to randomize placement order
+        List<GameObject> shuffledPrefabs = collectiblePrefabs.OrderBy(x => UnityEngine.Random.value).ToList();
+
+        int spawned = 0;
+        int maxAttemptsPerCollectible = 10;
+
+        foreach (GameObject prefab in shuffledPrefabs)
         {
-            Vector3 spawnPos = hit.position + Vector3.up * 1.1f; // raise slightly above ground
+            bool spawnedThisOne = false;
+            int attempts = 0;
 
-            // Choose a random collectible
-            GameObject prefab = collectiblePrefabs[UnityEngine.Random.Range(0, collectiblePrefabs.Length)];
-            GameObject collectibleObj = Instantiate(prefab, spawnPos, Quaternion.identity);
-
-            // Set ID/type
-            Collectible collectible = collectibleObj.GetComponent<Collectible>();
-            if (collectible != null)
+            while (!spawnedThisOne && attempts < maxAttemptsPerCollectible)
             {
-                collectible.collectibleType = prefab.name;
+                attempts++;
+
+                Vector3 randomPos = new Vector3(
+                    UnityEngine.Random.Range(-halfSize, halfSize),
+                    0f,
+                    UnityEngine.Random.Range(-halfSize, halfSize)
+                ) + levelCenter.position;
+
+                if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+                {
+                    Vector3 spawnPos = hit.position + Vector3.up * 1.1f;
+
+                    GameObject collectibleObj = Instantiate(prefab, spawnPos, Quaternion.identity);
+
+                    Collectible collectible = collectibleObj.GetComponent<Collectible>();
+                    if (collectible != null)
+                    {
+                        collectible.collectibleType = prefab.name;
+                    }
+
+                    spawned++;
+                    spawnedThisOne = true;
+                }
             }
 
-            //Debug.Log("Spawning collectible: " + prefab.name);
+            if (!spawnedThisOne)
+            {
+                Debug.LogWarning($"Failed to spawn collectible: {prefab.name} after {maxAttemptsPerCollectible} attempts.");
+            }
         }
-    }
-}
 
-    // collect the collectible 
+        Debug.Log($"Successfully spawned {spawned} collectibles.");
+    }
+
+
+
     public void CollectCollectible(string collectibleName)
     {
         if (!collectedCollectibles.Contains(collectibleName))
         {
             collectedCollectibles.Add(collectibleName);
             Debug.Log("Collected: " + collectibleName);
-            //TODO: do something else with the collectible 
+            UpdateCollectibleUI();
+
+            if (collectSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(collectSound);
+            }
+
+            if (collectedCollectibles.Count == collectiblePrefabs.Length)
+            {
+                OnAllCollectiblesCollected();
+            }
         }
         else
         {
             Debug.Log("Already collected: " + collectibleName);
         }
+    }
+    private void UpdateCollectibleUI()
+    {
+        collectibleUIText.text = $"Collectibles Found: {collectedCollectibles.Count} / {collectiblePrefabs.Length}";
+    }
+
+    private void OnAllCollectiblesCollected()
+    {
+        Debug.Log("All collectibles collected!");
+        GameObject confetti = Instantiate(confettiEffectPrefab, playerTransform.position + Vector3.up * 1f, Quaternion.identity);
+        Destroy(confetti, 5f);
+
     }
 }
