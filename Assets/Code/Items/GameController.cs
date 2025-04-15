@@ -47,7 +47,6 @@ public class GameController : MonoBehaviour
     private AudioSource audioSource;
     public GameObject confettiEffectPrefab; 
     public Transform playerTransform;
-    private int chestcount = 0;
 
     void Awake()
     {
@@ -74,6 +73,25 @@ public class GameController : MonoBehaviour
 
     public void InteractChest(Chest chest)
     {
+        // Prevent interacting if already upgrading
+        if (currentChest != null)
+        {
+
+            Debug.Log("Already interacting with a chest.");
+            return;
+        }
+
+        int currentPrice = chestPrice;
+        if (UIController.Instance.money < currentPrice)
+        {
+            Debug.Log("Not enough money to open the chest.");
+            return;
+        }
+
+        // Deduct money immediately (player can afford it)
+        UIController.Instance.AddMoney(-currentPrice);
+
+        // Open upgrade UI
         currentChest = chest;
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
@@ -81,7 +99,17 @@ public class GameController : MonoBehaviour
         SetupUpgradeOptions();
         if (upgradeInterface != null)
             upgradeInterface.SetActive(true);
+
+        // AFTER opening the chest successfully, THEN increase price
+        chestPrice += 20;
+        ChestPrompt prompt = currentChest.GetComponentInChildren<ChestPrompt>();
+        if (prompt != null)
+        {
+            prompt.ForceUpdatePrompt();
+        }
     }
+
+
 
     void SetupUpgradeOptions()
     {
@@ -237,15 +265,7 @@ public class GameController : MonoBehaviour
     }
     void UpgradeSelected(UpgradeType upgradeType)
     {
-        if (UIController.Instance.money < chestPrice)
-        {
-            Debug.Log("Not enough money to upgrade!");
-            return;
-        }
-
-        UIController.Instance.AddMoney(-chestPrice);
-        chestcount+=1;
-        chestPrice += 20*chestcount;
+        // No money check or deduction here anymore
 
         switch (upgradeType)
         {
@@ -295,11 +315,11 @@ public class GameController : MonoBehaviour
                 break;
             case UpgradeType.RareIncreaseDamage:
                 ThirdPersonController.Instance.UpgradePlayer("damage", 6f);
-                Debug.Log("Damage increased!");
+                Debug.Log("Rare Damage increased!");
                 break;
             case UpgradeType.RareIncreaseAttackSpeed:
                 ThirdPersonController.Instance.UpgradePlayer("attackspeed", 0.5f);
-                Debug.Log("Attack Speed increased!");
+                Debug.Log("Rare Attack Speed increased!");
                 break;
         }
 
@@ -308,13 +328,15 @@ public class GameController : MonoBehaviour
             Destroy(currentChest.gameObject);
             currentChest = null;
         }
+
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
+
         Time.timeScale = 1f;
-        //.Log("Locking cursor due to upgrade");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
 
     public void CancelUpgrade()
     {

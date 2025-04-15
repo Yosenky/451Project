@@ -1,26 +1,23 @@
 using StarterAssets;
 using UnityEngine;
+using TMPro;
 
 public class ChestPrompt : MonoBehaviour
 {
-    private GameObject promptUI;
+    private GameObject promptCanvas;
     private Chest chest;
 
     void Awake()
     {
-        // Look up the parent to find the Canvas/OpenChestText
         Transform parent = transform.parent;
         if (parent != null)
         {
             var canvas = parent.Find("Canvas");
             if (canvas != null)
             {
-                var textObj = canvas.Find("OpenChestText");
-                if (textObj != null)
-                    promptUI = textObj.gameObject;
+                promptCanvas = canvas.gameObject; 
             }
 
-            // Get the Chest component from the parent
             chest = parent.GetComponent<Chest>();
             if (chest == null)
             {
@@ -28,22 +25,39 @@ public class ChestPrompt : MonoBehaviour
             }
         }
 
-        if (promptUI == null)
-            Debug.LogWarning("ChestPrompt: Could not find OpenChestText under Canvas.");
+        if (promptCanvas == null)
+            Debug.LogWarning("ChestPrompt: Could not find Canvas under Chest.");
+
+        if (promptCanvas != null)
+            promptCanvas.SetActive(false); // Hide at start
     }
 
     void Start()
     {
-        if (promptUI != null)
-            promptUI.SetActive(false);
+        if (promptCanvas != null)
+            promptCanvas.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            if (promptUI != null)
-                promptUI.SetActive(true);
+            if (promptCanvas != null)
+            {
+                promptCanvas.SetActive(true);
+
+                TextMeshProUGUI promptText = promptCanvas.GetComponentInChildren<TextMeshProUGUI>();
+                if (promptText != null)
+                {
+                    int currentPrice = GameController.Instance.chestPrice;
+                    int playerMoney = UIController.Instance.money;
+
+                    string moneyColor = (playerMoney >= currentPrice) ? "#FFFFFF" : "#FF0000";
+
+                    promptText.text = $"<b>[E] Open Chest (<color={moneyColor}>${currentPrice}</color>)</b>";
+                    promptText.color = Color.white;
+                }
+            }
 
             if (chest != null)
                 ThirdPersonController.Instance.SetInteractableChest(chest);
@@ -54,10 +68,33 @@ public class ChestPrompt : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (promptUI != null)
-                promptUI.SetActive(false);
+            if (promptCanvas != null)
+                promptCanvas.SetActive(false);
 
             ThirdPersonController.Instance.ClearInteractableChest();
+        }
+    }
+
+    public void ForceUpdatePrompt()
+    {
+        if (promptCanvas != null && promptCanvas.activeSelf)
+        {
+            UpdateChestPromptText();
+        }
+    }
+
+    void UpdateChestPromptText()
+    {
+        TextMeshProUGUI promptText = promptCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        if (promptText != null)
+        {
+            int currentPrice = GameController.Instance.chestPrice;
+            int playerMoney = UIController.Instance.money;
+
+            string moneyColor = (playerMoney >= currentPrice) ? "#FFFFFF" : "#FF0000";
+
+            promptText.text = $"<b>[E] Open Chest (<color={moneyColor}>${currentPrice}</color>)</b>";
+            promptText.color = Color.white;
         }
     }
 }
