@@ -38,14 +38,19 @@ public class GameController : MonoBehaviour
 
     // collectible system variables
     public GameObject[] collectiblePrefabs;
+    public Transform[] collectibleSpawnPoints; // since we are now using fixed location spawns. 
     public int collectibleCount;
-    public float collectibleSpawnRadius = 10f; // how far from center can collectibles spawn
     public List<String> collectedCollectibles = new List<String>();
-    public TextMeshProUGUI collectibleUIText;
+
+    public Dictionary<string, Sprite> collectibleIcons = new Dictionary<string, Sprite>();
+    public Transform collectedItemsContainer;
+    public GameObject collectedItemUIPrefab;
+    // public TextMeshProUGUI collectibleUIText;
+    public List<CollectibleIconEntry> collectibleIconEntries;
     [Header("Audio")]
     public AudioClip collectSound;
     private AudioSource audioSource;
-    public GameObject confettiEffectPrefab; 
+    public GameObject confettiEffectPrefab;
     public Transform playerTransform;
 
     void Awake()
@@ -58,6 +63,7 @@ public class GameController : MonoBehaviour
         if (upgradeInterface != null)
             upgradeInterface.SetActive(false);
 
+        DontDestroyOnLoad(gameObject); // keep state for the game over scene 
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
     }
@@ -66,10 +72,24 @@ public class GameController : MonoBehaviour
     {
         StartCoroutine(SpawnChestRoutine());
         SpawnCollectibles();
-        UpdateCollectibleUI();
+        // UpdateCollectibleUI();
         audioSource = GetComponent<AudioSource>();
+        BuildIconDictionary();
     }
 
+
+    void BuildIconDictionary()
+    {
+        foreach (var entry in collectibleIconEntries)
+        {
+            if (!collectibleIcons.ContainsKey(entry.collectibleName))
+            {
+                collectibleIcons.Add(entry.collectibleName, entry.icon);
+            }
+        }
+
+        Debug.Log($"Manually loaded {collectibleIcons.Count} collectible icons from Inspector.");
+    }
 
     public void InteractChest(Chest chest)
     {
@@ -408,56 +428,39 @@ public class GameController : MonoBehaviour
         }
     }
 
-   
+
     public void SpawnCollectibles()
     {
-        float halfSize = collectibleSpawnRadius;
-
-        // Shuffle collectiblePrefabs to randomize placement order
-        List<GameObject> shuffledPrefabs = collectiblePrefabs.OrderBy(x => UnityEngine.Random.value).ToList();
-
-        int spawned = 0;
-        int maxAttemptsPerCollectible = 10;
-
-        foreach (GameObject prefab in shuffledPrefabs)
+        if (collectibleSpawnPoints.Length == 0)
         {
-            bool spawnedThisOne = false;
-            int attempts = 0;
-
-            while (!spawnedThisOne && attempts < maxAttemptsPerCollectible)
-            {
-                attempts++;
-
-                Vector3 randomPos = new Vector3(
-                    UnityEngine.Random.Range(-halfSize, halfSize),
-                    0f,
-                    UnityEngine.Random.Range(-halfSize, halfSize)
-                ) + levelCenter.position;
-
-                if (NavMesh.SamplePosition(randomPos, out NavMeshHit hit, 5f, NavMesh.AllAreas))
-                {
-                    Vector3 spawnPos = hit.position + Vector3.up * 1.1f;
-
-                    GameObject collectibleObj = Instantiate(prefab, spawnPos, Quaternion.identity);
-
-                    Collectible collectible = collectibleObj.GetComponent<Collectible>();
-                    if (collectible != null)
-                    {
-                        collectible.collectibleType = prefab.name;
-                    }
-
-                    spawned++;
-                    spawnedThisOne = true;
-                }
-            }
-
-            if (!spawnedThisOne)
-            {
-                Debug.LogWarning($"Failed to spawn collectible: {prefab.name} after {maxAttemptsPerCollectible} attempts.");
-            }
+            Debug.LogWarning("No collectible spawn points assigned.");
+            return;
         }
 
-        Debug.Log($"Successfully spawned {spawned} collectibles.");
+        int index = 0;
+
+        for (int i = 0; i < collectibleSpawnPoints.Length; i++)
+        {
+            if (index >= collectiblePrefabs.Length) break;
+
+            Transform spawnPoint = collectibleSpawnPoints[i];
+            GameObject collectiblePrefab = collectiblePrefabs[index];
+
+            GameObject collectibleObj = Instantiate(collectiblePrefab, spawnPoint.position, Quaternion.identity);
+
+            Collectible collectible = collectibleObj.GetComponent<Collectible>();
+
+            if (collectible != null)
+            {
+                collectible.collectibleType = collectiblePrefab.name;
+            }
+            else
+            {
+                Debug.LogWarning("Collectible prefab does not have a Collectible component.");
+            }
+
+            index++;
+        }
     }
 
 
@@ -468,12 +471,15 @@ public class GameController : MonoBehaviour
         {
             collectedCollectibles.Add(collectibleName);
             Debug.Log("Collected: " + collectibleName);
-            UpdateCollectibleUI();
+            // UpdateCollectibleUI();
 
             if (collectSound != null && audioSource != null)
             {
                 audioSource.PlayOneShot(collectSound);
             }
+
+            //Update the display collectible ui
+            DisplayCollectedItemUI(collectibleName);
 
             if (collectedCollectibles.Count == collectiblePrefabs.Length)
             {
@@ -485,10 +491,30 @@ public class GameController : MonoBehaviour
             Debug.Log("Already collected: " + collectibleName);
         }
     }
-    private void UpdateCollectibleUI()
+    // private void UpdateCollectibleUI()
+    // {
+    //     collectibleUIText.text = $"Collectibles Found: {collectedCollectibles.Count} / {collectiblePrefabs.Length}";
+    // }
+
+    private void DisplayCollectedItemUI(string collectibleName)
     {
-        collectibleUIText.text = $"Collectibles Found: {collectedCollectibles.Count} / {collectiblePrefabs.Length}";
+        GameObject collectedItemObj = Instantiate(collectedItemUIPrefab, collectedItemsContainer);
+
+        if (collectibleIcons.TryGetValue(collectibleName, out Sprite icon))
+        {
+            Image image = collectedItemObj.GetComponentInChildren<Image>();
+            if (image != null)
+            {
+                image.sprite = icon;
+                image.preserveAspect = true;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No icon found for collectible: {collectibleName}");
+        }
     }
+
 
     private void OnAllCollectiblesCollected()
     {

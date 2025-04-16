@@ -374,6 +374,7 @@ namespace StarterAssets
             // Store final stats for Game Over screen
             PlayerPrefs.SetInt("FinalMoney", gold);
             PlayerPrefs.SetFloat("FinalTime", UIController.Instance.GetElapsedTime());
+            
             PlayerPrefs.Save(); // Ensure data is saved
 
             // Load Game Over scene
