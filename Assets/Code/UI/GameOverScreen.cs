@@ -45,5 +45,6 @@ public class GameOverScreen : MonoBehaviour
     {
         GameController.Instance.collectedCollectibles.Clear(); // clear 
         SceneManager.LoadScene("MainScene");
+        GameController.Instance.chestPrice = GameController.Instance.startingChestPrice;
     }
 }

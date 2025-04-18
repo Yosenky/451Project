@@ -1157,7 +1157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 337, y: 365}
+  m_AnchoredPosition: {x: 337, y: 514}
   m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1250632825
@@ -1180,9 +1180,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Use E to open a chest, and be given 3 random upgrade options. If you do
+  m_text: 'Use E to open a chest, and be given 3 random upgrade options. If you do
     not like any of the options given, you can opt to leave the chest and get new
     ones the next time you open it, but be warned as the price will still go up!
+
+    Blue
+    Upgrade options are common upgrade, and gold upgrade options are rare!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c61997c3fce7bea479990f23c2e269c1, type: 2}
   m_sharedMaterial: {fileID: -4297086750580659513, guid: c61997c3fce7bea479990f23c2e269c1, type: 2}

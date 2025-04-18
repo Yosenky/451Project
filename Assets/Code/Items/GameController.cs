@@ -22,6 +22,7 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance;
     public int chestPrice = 0; // set to 0 for testing upgrades
+    public int startingChestPrice = 0;
     public GameObject upgradeInterface;
     public GameObject upgradeOptionPanelPrefab;
     public Transform upgradeOptionsContainer; // Container with Horizontal Layout Group
